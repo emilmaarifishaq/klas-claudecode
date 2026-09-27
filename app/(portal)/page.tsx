@@ -19,7 +19,6 @@ const stats = [
   { label: 'Total Stages', value: stages.length, emoji: '📚' },
   { label: 'Course Stages', value: courseStages.length, emoji: '🎓' },
   { label: 'Total Modules', value: stages.reduce((a, s) => a + s.modules.length, 0), emoji: '📖' },
-  { label: 'Members', value: '6,875', emoji: '👥' },
 ]
 
 export default function DashboardPage() {
@@ -30,7 +29,7 @@ export default function DashboardPage() {
         <p className="text-muted-foreground mt-1">Claude Code Club — Personal Learning Portal</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {stats.map(s => (
           <div key={s.label} className="bg-card border border-border rounded-xl p-4">
             <div className="text-2xl mb-1">{s.emoji}</div>
