@@ -15,7 +15,14 @@ export const authOptions: NextAuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) throw new Error('Email dan password wajib diisi')
-        const user = await getUser(credentials.email)
+        let user
+        try {
+          user = await getUser(credentials.email)
+        } catch (error) {
+          // Keep database details out of the login page; they belong in the server logs.
+          console.error('[auth] user lookup failed', error)
+          throw new Error('Login sedang bermasalah. Coba lagi nanti.')
+        }
         if (!user || !(await compare(credentials.password, user.password))) {
           throw new Error('Email atau password salah')
         }
