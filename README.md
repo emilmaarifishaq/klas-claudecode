@@ -1,24 +1,18 @@
-# KLAS
+# Claude Code Club — Personal Learning Portal
 
-Paid online course portal: public sales page, Tripay QRIS checkout, automatic account
-creation with emailed credentials, and a logged-in classroom with per-lesson progress.
+Private, single-user portal for the Claude Code Club course material the owner is
+subscribed to (from `emilmaarifishaq/skool-portal`), with a login in front of it.
 
-Next.js 16 · NextAuth (credentials) · Vercel Postgres · Tripay · Resend · Tailwind 4
+Not for public or paid distribution: the course content belongs to Claude Code Club.
+Keep Vercel Authentication (Settings → Deployment Protection) turned on.
 
-## Flow
+Next.js 16 · NextAuth (credentials) · Neon Postgres · Tailwind 4
 
-`/join` (sales page) → `/checkout` → Tripay QRIS → `/api/tripay-callback` marks the order
-paid, creates the account and emails a password → `/login` → classroom.
+## Setup
 
-Everything except `/join`, `/login`, `/checkout` and `/api/*` requires a session
-(`proxy.ts`, plus a server-side check in `app/(portal)/layout.tsx`).
+1. Attach a Neon/Postgres database to the Vercel project (fills `POSTGRES_URL`); tables are created automatically.
+2. Set `NEXTAUTH_SECRET`, `NEXTAUTH_URL`, `ADMIN_EMAIL`, `ADMIN_PASSWORD_HASH` (see `.env.example`).
+3. Redeploy, then sign in at `/login`.
 
-## Run locally
-
-```bash
-cp .env.example .env.local   # fill in values
-npm install
-npm run dev
-```
-
-See [SETUP.md](SETUP.md) for the launch checklist.
+Lessons live in `content/stage-<id>.md` (read server-side, never from `public/`);
+stage list in `data/stages.ts`; images, PDFs and resources in `public/`.

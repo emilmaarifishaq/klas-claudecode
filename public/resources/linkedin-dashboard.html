@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Audience Quality — Issue No. 01</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --orange:#E96A3C; --paper:#E8DCC4; --charcoal:#1C1B17; --bone:#F2E9D6;
+  --teal:#5C8C95; --navy:#1F2A3A; --amber:#F0B24A; --shadow:#C9BDA0; --dim:#6B675C;
+  --field:#1C1B17; --card:#22211C; --line-soft:rgba(232,220,196,.14);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--field)}
+body{background:var(--field);color:var(--paper);font-family:'Inter Tight',sans-serif;
+  -webkit-font-smoothing:antialiased;position:relative;min-height:100vh;padding:0 0 80px}
+.grain{position:fixed;inset:0;pointer-events:none;z-index:99;opacity:.10;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{max-width:none;width:100%;margin:0;padding:0 clamp(32px,4vw,72px)}
+.meta{font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.12em;font-size:11px;color:var(--shadow)}
+.disp{font-family:'Anton',sans-serif;text-transform:uppercase;line-height:.85;letter-spacing:-.02em}
+
+/* masthead */
+.mast{border-bottom:2px solid var(--paper);padding:26px 0 14px;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px}
+.mast .issue{font-size:11px}
+.mast h1{font-family:'Anton';text-transform:uppercase;font-size:clamp(34px,6vw,72px);line-height:.85;letter-spacing:-.02em;color:var(--paper)}
+.mast h1 b{color:var(--orange);font-weight:400}
+.mast .right{text-align:right;line-height:1.7}
+
+/* hero headline stat — Archetype D, numbered hero */
+.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:0;border-bottom:2px solid var(--paper);
+  position:relative;align-items:stretch}
+.hero .big{padding:42px 0 38px}
+.hero .kicker{margin-bottom:8px}
+.hero .num{font-family:'Anton';color:var(--orange);font-size:clamp(120px,21vw,260px);line-height:.78;letter-spacing:-.03em}
+.hero .num span{font-size:.42em;vertical-align:super}
+.hero .sub{font-family:'Anton';text-transform:uppercase;font-size:clamp(18px,2.4vw,30px);letter-spacing:-.01em;color:var(--paper);line-height:.95;margin-top:6px;max-width:18ch}
+.hero .split-stat{border-left:2px solid var(--paper);padding:42px 0 38px 38px;display:flex;flex-direction:column;justify-content:center;gap:0}
+.hbar{height:30px;display:flex;width:100%;margin:14px 0 22px;border:1px solid var(--charcoal)}
+.hbar span{display:block;height:100%}
+.split-line{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--line-soft)}
+.split-line .v{font-family:'Anton';font-size:24px;letter-spacing:-.01em}
+.dot-key{width:9px;height:9px;display:inline-block;margin-right:8px;vertical-align:middle}
+
+/* section */
+section{padding:48px 0 0}
+.sec-head{display:flex;align-items:baseline;gap:14px;border-bottom:1px solid var(--paper);padding-bottom:10px;margin-bottom:24px}
+.sec-head .n{font-family:'Anton';color:var(--orange);font-size:20px}
+.sec-head h2{font-family:'Anton';text-transform:uppercase;font-size:clamp(22px,3vw,38px);letter-spacing:-.01em;color:var(--paper);line-height:.9}
+.sec-head .note{margin-left:auto;font-size:11px;max-width:34ch;text-align:right}
+
+/* breakdown */
+.bd-row{display:grid;grid-template-columns:130px 1fr 130px;align-items:center;gap:18px;padding:11px 0;border-bottom:1px solid var(--line-soft)}
+.bd-label{font-family:'JetBrains Mono';font-weight:700;font-size:12px;letter-spacing:.08em}
+.bd-track{height:22px;background:rgba(232,220,196,.06)}
+.bd-fill{height:100%}
+.bd-num{font-family:'Anton';font-size:22px;text-align:right;letter-spacing:-.01em}
+.bd-pct{font-family:'JetBrains Mono';font-weight:400;font-size:11px;color:var(--shadow);margin-left:9px}
+
+/* table */
+.tbl-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+thead th{font-family:'JetBrains Mono';text-transform:uppercase;letter-spacing:.1em;font-size:10px;color:var(--shadow);
+  text-align:left;padding:0 14px 10px;border-bottom:1px solid var(--paper);white-space:nowrap}
+thead th.r,td.tr-buyer,td.tr-pct,td.tr-tot{text-align:right}
+tbody td{padding:11px 14px;border-bottom:1px solid var(--line-soft);vertical-align:middle}
+.tr-rank{font-family:'JetBrains Mono';color:var(--dim);font-size:11px}
+.tr-date{font-family:'JetBrains Mono';font-size:11px;color:var(--shadow);white-space:nowrap}
+.tr-text{max-width:430px;line-height:1.35;color:var(--bone)}
+.tr-split{width:160px;min-width:140px}
+.sb{height:14px;display:flex;width:100%;overflow:hidden}
+.sb span{display:block;height:100%}
+.tr-buyer{font-family:'Anton';font-size:18px;color:var(--orange)}
+.tr-pct{font-family:'JetBrains Mono';font-size:12px;color:var(--paper)}
+.tr-tot{font-family:'JetBrains Mono';font-size:12px;color:var(--shadow)}
+
+/* best/worst */
+.bw-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--paper)}
+.bw-col{padding:0}
+.bw-col+.bw-col{border-left:1px solid var(--paper)}
+.bw-col>.bw-title{font-family:'JetBrains Mono';text-transform:uppercase;letter-spacing:.12em;font-size:11px;
+  padding:14px 22px;border-bottom:1px solid var(--paper);display:flex;justify-content:space-between}
+.bw-card{padding:20px 22px;border-bottom:1px solid var(--line-soft)}
+.bw-card:last-child{border-bottom:none}
+.bw-pct{font-family:'Anton';font-size:48px;line-height:.8;letter-spacing:-.02em}
+.bw-pct span{font-size:.45em;vertical-align:super}
+.bw-meta{font-family:'JetBrains Mono';font-size:11px;color:var(--shadow);margin:8px 0 7px;letter-spacing:.04em}
+.bw-text{font-size:13px;line-height:1.4;color:var(--bone);max-width:46ch}
+.bw-date{font-family:'JetBrains Mono';font-size:10px;color:var(--dim);margin-top:9px;letter-spacing:.06em}
+
+/* trend */
+.trend-wrap{border:1px solid var(--paper);padding:10px 18px 4px}
+.trend{width:100%;height:auto;display:block}
+.trend .grid{stroke:var(--line-soft);stroke-width:1}
+.trend .ax{fill:var(--shadow);font-family:'JetBrains Mono';font-size:10px;text-anchor:end}
+.trend .area{fill:var(--orange);opacity:.10}
+.trend .line{fill:none;stroke:var(--orange);stroke-width:2.5}
+.trend .dot{fill:var(--charcoal);stroke:var(--orange);stroke-width:2.5}
+.trend .dlabel{fill:var(--paper);font-family:'Anton';font-size:14px;text-anchor:middle}
+.trend .xlabel{fill:var(--shadow);font-family:'JetBrains Mono';font-size:10px;text-anchor:middle;letter-spacing:.05em}
+.trend-read{display:flex;gap:14px;align-items:baseline;margin-top:14px;flex-wrap:wrap}
+.trend-read .big{font-family:'Anton';text-transform:uppercase;font-size:26px;color:var(--orange);letter-spacing:-.01em}
+.trend-read .txt{font-size:13px;color:var(--bone);max-width:48ch;line-height:1.4}
+
+/* brief */
+.brief-tldr{border:1px solid var(--orange);background:rgba(233,106,60,.06);padding:24px 28px;margin-bottom:34px}
+.brief-tldr .lead{font-family:'Anton';text-transform:uppercase;font-size:clamp(18px,2.2vw,26px);line-height:.95;letter-spacing:-.01em;color:var(--paper);max-width:40ch}
+.brief-tldr .lead b{color:var(--orange);font-weight:400}
+.brief-tldr p{font-size:13.5px;line-height:1.5;color:var(--bone);max-width:78ch;margin-top:14px}
+.brief-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--paper)}
+.brief-col{padding:24px 26px}
+.brief-col+.brief-col{border-left:1px solid var(--paper)}
+.brief-col h3{font-family:'JetBrains Mono';text-transform:uppercase;letter-spacing:.12em;font-size:11px;color:var(--shadow);padding-bottom:14px;margin-bottom:16px;border-bottom:1px solid var(--line-soft);display:flex;gap:10px;align-items:baseline}
+.brief-col h3 .x{font-family:'Anton';font-size:15px}
+.brief-item{padding:13px 0;border-bottom:1px solid var(--line-soft)}
+.brief-item:last-child{border-bottom:none}
+.brief-item .t{font-family:'Inter Tight';font-weight:600;font-size:14px;color:var(--paper);line-height:1.3}
+.brief-item .t .ang{color:var(--orange);font-family:'Anton';margin-right:8px}
+.brief-item .d{font-size:12.5px;line-height:1.45;color:var(--bone);margin-top:5px;max-width:52ch}
+.brief-item .d em{color:var(--amber);font-style:normal}
+.tmpl{border:1px solid var(--paper);margin-top:34px}
+.tmpl.draft{border:1px solid var(--orange);background:rgba(233,106,60,.05)}
+.tmpl.draft .tmpl-head{border-bottom-color:var(--orange)}
+.tmpl.draft pre{color:var(--paper)}
+.tmpl.draft .nonneg span b{color:var(--orange)}
+.tmpl-head{font-family:'JetBrains Mono';text-transform:uppercase;letter-spacing:.12em;font-size:11px;padding:14px 22px;border-bottom:1px solid var(--paper);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;color:var(--shadow)}
+.tmpl pre{font-family:'JetBrains Mono';font-size:12.5px;line-height:1.65;color:var(--bone);padding:22px;white-space:pre-wrap;word-break:break-word}
+.tmpl pre .ph{color:var(--shadow)}
+.tmpl pre .hi{color:var(--orange)}
+.nonneg{display:flex;flex-wrap:wrap;gap:8px;padding:0 22px 22px}
+.nonneg span{font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.04em;color:var(--paper);border:1px solid var(--line-soft);padding:6px 11px}
+.nonneg span b{color:var(--orange);font-weight:700;margin-right:6px}
+footer{margin-top:56px;border-top:2px solid var(--paper);padding-top:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+@media(max-width:860px){
+  .brief-grid{grid-template-columns:1fr} .brief-col+.brief-col{border-left:none;border-top:1px solid var(--paper)}
+  .hero{grid-template-columns:1fr} .hero .split-stat{border-left:none;border-top:2px solid var(--paper);padding-left:0;padding-top:30px}
+  .bw-grid{grid-template-columns:1fr} .bw-col+.bw-col{border-left:none;border-top:1px solid var(--paper)}
+  .bd-row{grid-template-columns:96px 1fr 92px;gap:10px}
+}
+</style></head>
+<body>
+<div class="grain"></div>
+<div class="wrap">
+
+  <div class="mast">
+    <div>
+      <div class="meta issue">Issue No. 01 &nbsp;/&nbsp; 05_06_26 &nbsp;/&nbsp; Linkedin Audience Audit</div>
+      <h1>AUDIENCE<br><b>QUALITY</b></h1>
+    </div>
+    <div class="right meta">
+      45 POSTS &nbsp;&middot;&nbsp; 30 DAYS<br>
+      1135 UNIQUE COMMENTERS<br>
+      1586 CLASSIFIED ENGAGEMENTS
+    </div>
+  </div>
+
+  <!-- HERO STAT -->
+  <div class="hero">
+    <div class="big">
+      <div class="kicker meta">Share of engagement from buyers &nbsp;&rarr;</div>
+      <div class="num">42<span>%</span></div>
+      <div class="sub">of all engagement<br>comes from your ICP</div>
+    </div>
+    <div class="split-stat">
+      <div class="meta">Buyer &nbsp;vs&nbsp; everyone else</div>
+      <div class="hbar">
+        <span style="width:42.2%;background:var(--orange)"></span>
+        <span style="width:57.8%;background:var(--shadow)"></span>
+      </div>
+      <div class="split-line"><div><span class="dot-key" style="background:var(--orange)"></span>BUYER</div><div class="v" style="color:var(--orange)">42.2%</div></div>
+      <div class="split-line"><div><span class="dot-key" style="background:var(--shadow)"></span>NON-BUYER</div><div class="v" style="color:var(--shadow)">57.8%</div></div>
+      <div class="meta" style="margin-top:16px">670 buyer comments of 1586 total</div>
+    </div>
+  </div>
+
+  <!-- 3 BREAKDOWN -->
+  <section>
+    <div class="sec-head"><div class="n">01</div><h2>Commenter Breakdown</h2>
+      <div class="note meta">Every classified comment across all 45 posts</div></div>
+    <div class="bd-row">
+      <div class="bd-label">BUYER</div>
+      <div class="bd-track"><div class="bd-fill" style="width:100.0%;background:#E96A3C"></div></div>
+      <div class="bd-num">670<span class="bd-pct">42.2%</span></div>
+    </div><div class="bd-row">
+      <div class="bd-label">PEER</div>
+      <div class="bd-track"><div class="bd-fill" style="width:50.3%;background:#5C8C95"></div></div>
+      <div class="bd-num">337<span class="bd-pct">21.2%</span></div>
+    </div><div class="bd-row">
+      <div class="bd-label">CREATOR</div>
+      <div class="bd-track"><div class="bd-fill" style="width:8.4%;background:#F0B24A"></div></div>
+      <div class="bd-num">56<span class="bd-pct">3.5%</span></div>
+    </div><div class="bd-row">
+      <div class="bd-label">COMPETITOR</div>
+      <div class="bd-track"><div class="bd-fill" style="width:53.0%;background:#C9BDA0"></div></div>
+      <div class="bd-num">355<span class="bd-pct">22.4%</span></div>
+    </div><div class="bd-row">
+      <div class="bd-label">UNKNOWN</div>
+      <div class="bd-track"><div class="bd-fill" style="width:25.1%;background:#6B675C"></div></div>
+      <div class="bd-num">168<span class="bd-pct">10.6%</span></div>
+    </div>
+  </section>
+
+  <!-- 5 TREND -->
+  <section>
+    <div class="sec-head"><div class="n">02</div><h2>Buyer Engagement Trend</h2>
+      <div class="note meta">Buyer share of engagement, by week</div></div>
+    <div class="trend-wrap"><svg viewBox="0 0 820 300" class="trend" preserveAspectRatio="xMidYMid meet">
+  <line x1="54" y1="254.0" x2="796" y2="254.0" class="grid"/><text x="44" y="258.0" class="ax">20%</text><line x1="54" y1="190.0" x2="796" y2="190.0" class="grid"/><text x="44" y="194.0" class="ax">30%</text><line x1="54" y1="126.0" x2="796" y2="126.0" class="grid"/><text x="44" y="130.0" class="ax">40%</text><line x1="54" y1="62.0" x2="796" y2="62.0" class="grid"/><text x="44" y="66.0" class="ax">50%</text>
+  <polygon points="54,254 54.0,140.1 239.5,147.8 425.0,113.2 610.5,83.8 796.0,127.3 796.0,254" class="area"/>
+  <polyline points="54.0,140.1 239.5,147.8 425.0,113.2 610.5,83.8 796.0,127.3" class="line"/>
+  <circle cx="54.0" cy="140.1" r="5" class="dot"/><text x="54.0" y="126.1" class="dlabel">37.8%</text><text x="54.0" y="284" class="xlabel">May 06</text><circle cx="239.5" cy="147.8" r="5" class="dot"/><text x="239.5" y="133.8" class="dlabel">36.6%</text><text x="239.5" y="284" class="xlabel">May 13</text><circle cx="425.0" cy="113.2" r="5" class="dot"/><text x="425.0" y="99.2" class="dlabel">42.0%</text><text x="425.0" y="284" class="xlabel">May 20</text><circle cx="610.5" cy="83.8" r="5" class="dot"/><text x="610.5" y="69.8" class="dlabel">46.6%</text><text x="610.5" y="284" class="xlabel">May 27</text><circle cx="796.0" cy="127.3" r="5" class="dot"/><text x="796.0" y="113.3" class="dlabel">39.8%</text><text x="796.0" y="284" class="xlabel">Jun 03</text>
+</svg></div>
+    <div class="trend-read">
+      <div class="big">improving →</div>
+      <div class="txt">Buyer share moved from <b>37.8%</b> (May 06) to <b>39.8%</b> (Jun 03) — a +2.0 pt swing. Peak was the week of May 27 (46.6%), driven by your highest-volume posting week.</div>
+    </div>
+  </section>
+
+  <!-- 4 BEST / WORST -->
+  <section>
+    <div class="sec-head"><div class="n">03</div><h2>Best &amp; Worst</h2>
+      <div class="note meta">Ranked by buyer share &middot; worst from posts with &ge;20 comments</div></div>
+    <div class="bw-grid">
+      <div class="bw-col"><div class="bw-title"><span>Top 3 &mdash; Buyer Magnets</span><span style="color:var(--orange)">&uarr;</span></div><div class="bw-card">
+      <div class="bw-pct" style="color:#E96A3C">52.0<span>%</span></div>
+      <div class="bw-meta">52 buyer comments / 100 total</div>
+      <div class="bw-text">Stop watching tutorials. Stop saving lead magnets. I have 427 of them. There's only one thing t</div>
+      <div class="bw-date">2026-06-03 &nbsp;&middot;&nbsp; 88 reactions</div>
+    </div><div class="bw-card">
+      <div class="bw-pct" style="color:#E96A3C">52.0<span>%</span></div>
+      <div class="bw-meta">52 buyer comments / 100 total</div>
+      <div class="bw-text">Comment OPEN below and I'll send you all 10 in your DMs. Here are the top 10 open source Claude</div>
+      <div class="bw-date">2026-06-01 &nbsp;&middot;&nbsp; 124 reactions</div>
+    </div><div class="bw-card">
+      <div class="bw-pct" style="color:#E96A3C">50.0<span>%</span></div>
+      <div class="bw-meta">50 buyer comments / 100 total</div>
+      <div class="bw-text">I added 20k followers on Instagram in 30 Days. Here's how: A lot of it was built with carousels</div>
+      <div class="bw-date">2026-05-29 &nbsp;&middot;&nbsp; 71 reactions</div>
+    </div></div>
+      <div class="bw-col"><div class="bw-title"><span>Bottom 3 &mdash; Wrong Audience</span><span style="color:var(--shadow)">&darr;</span></div><div class="bw-card">
+      <div class="bw-pct" style="color:#C9BDA0">25.0<span>%</span></div>
+      <div class="bw-meta">5 buyer comments / 20 total</div>
+      <div class="bw-text">I replaced my VA, my designer, and my social media manager. Built the replacement in 48 hours. </div>
+      <div class="bw-date">2026-05-11 &nbsp;&middot;&nbsp; 15 reactions</div>
+    </div><div class="bw-card">
+      <div class="bw-pct" style="color:#C9BDA0">29.4<span>%</span></div>
+      <div class="bw-meta">10 buyer comments / 34 total</div>
+      <div class="bw-text">I closed $250K+ in deals without sending a single cold DM. If you hate feeling like you're just</div>
+      <div class="bw-date">2026-05-12 &nbsp;&middot;&nbsp; 25 reactions</div>
+    </div><div class="bw-card">
+      <div class="bw-pct" style="color:#C9BDA0">30.3<span>%</span></div>
+      <div class="bw-meta">10 buyer comments / 33 total</div>
+      <div class="bw-text">I built a system that replaced cold outreach entirely. No more DMs that feel spammy. No more co</div>
+      <div class="bw-date">2026-05-13 &nbsp;&middot;&nbsp; 22 reactions</div>
+    </div></div>
+    </div>
+  </section>
+
+  <!-- 2 POST TABLE -->
+  <section>
+    <div class="sec-head"><div class="n">04</div><h2>Post Performance</h2>
+      <div class="note meta">All posts &middot; sorted by buyer engagement, not total</div></div>
+    <div class="tbl-scroll"><table>
+      <thead><tr>
+        <th>#</th><th>Date</th><th>Post</th><th>Audience Split</th>
+        <th class="r">Buyers</th><th class="r">Buyer&nbsp;%</th><th class="r">Total</th>
+      </tr></thead>
+      <tbody><tr>
+      <td class="tr-rank">01</td>
+      <td class="tr-date">2026-06-03</td>
+      <td class="tr-text">Stop watching tutorials. Stop saving lead magnets. I have 427 of them. There's only one thing t</td>
+      <td class="tr-split"><div class="sb"><span style="width:52.000%;background:#E96A3C" title="BUYER 52"></span><span style="width:20.000%;background:#5C8C95" title="PEER 20"></span><span style="width:2.000%;background:#F0B24A" title="CREATOR 2"></span><span style="width:19.000%;background:#C9BDA0" title="COMPETITOR 19"></span><span style="width:7.000%;background:#6B675C" title="UNKNOWN 7"></span></div></td>
+      <td class="tr-buyer">52</td>
+      <td class="tr-pct">52.0%</td>
+      <td class="tr-tot">100</td>
+    </tr><tr>
+      <td class="tr-rank">02</td>
+      <td class="tr-date">2026-06-01</td>
+      <td class="tr-text">Comment OPEN below and I'll send you all 10 in your DMs. Here are the top 10 open source Claude</td>
+      <td class="tr-split"><div class="sb"><span style="width:52.000%;background:#E96A3C" title="BUYER 52"></span><span style="width:11.000%;background:#5C8C95" title="PEER 11"></span><span style="width:25.000%;background:#C9BDA0" title="COMPETITOR 25"></span><span style="width:12.000%;background:#6B675C" title="UNKNOWN 12"></span></div></td>
+      <td class="tr-buyer">52</td>
+      <td class="tr-pct">52.0%</td>
+      <td class="tr-tot">100</td>
+    </tr><tr>
+      <td class="tr-rank">03</td>
+      <td class="tr-date">2026-05-29</td>
+      <td class="tr-text">I added 20k followers on Instagram in 30 Days. Here's how: A lot of it was built with carousels</td>
+      <td class="tr-split"><div class="sb"><span style="width:50.000%;background:#E96A3C" title="BUYER 50"></span><span style="width:13.000%;background:#5C8C95" title="PEER 13"></span><span style="width:5.000%;background:#F0B24A" title="CREATOR 5"></span><span style="width:17.000%;background:#C9BDA0" title="COMPETITOR 17"></span><span style="width:15.000%;background:#6B675C" title="UNKNOWN 15"></span></div></td>
+      <td class="tr-buyer">50</td>
+      <td class="tr-pct">50.0%</td>
+      <td class="tr-tot">100</td>
+    </tr><tr>
+      <td class="tr-rank">04</td>
+      <td class="tr-date">2026-06-03</td>
+      <td class="tr-text">I talked to 519 Claude Code users in the last 10 days. Almost every single one said the same th</td>
+      <td class="tr-split"><div class="sb"><span style="width:44.000%;background:#E96A3C" title="BUYER 44"></span><span style="width:18.000%;background:#5C8C95" title="PEER 18"></span><span style="width:2.000%;background:#F0B24A" title="CREATOR 2"></span><span style="width:16.000%;background:#C9BDA0" title="COMPETITOR 16"></span><span style="width:20.000%;background:#6B675C" title="UNKNOWN 20"></span></div></td>
+      <td class="tr-buyer">44</td>
+      <td class="tr-pct">44.0%</td>
+      <td class="tr-tot">100</td>
+    </tr><tr>
+      <td class="tr-rank">05</td>
+      <td class="tr-date">2026-05-29</td>
+      <td class="tr-text">Opus 4.8 just dropped. I spent 3 hours building 10 income prompts with it. Here's what's inside</td>
+      <td class="tr-split"><div class="sb"><span style="width:44.000%;background:#E96A3C" title="BUYER 44"></span><span style="width:23.000%;background:#5C8C95" title="PEER 23"></span><span style="width:2.000%;background:#F0B24A" title="CREATOR 2"></span><span style="width:18.000%;background:#C9BDA0" title="COMPETITOR 18"></span><span style="width:13.000%;background:#6B675C" title="UNKNOWN 13"></span></div></td>
+      <td class="tr-buyer">44</td>
+      <td class="tr-pct">44.0%</td>
+      <td class="tr-tot">100</td>
+    </tr><tr>
+      <td class="tr-rank">06</td>
+      <td class="tr-date">2026-05-18</td>
+      <td class="tr-text">I made $2,500/month from digital products before I had an audience. Here's the exact 3-step sys</td>
+      <td class="tr-split"><div class="sb"><span style="width:41.000%;background:#E96A3C" title="BUYER 41"></span><span style="width:23.000%;background:#5C8C95" title="PEER 23"></span><span style="width:5.000%;background:#F0B24A" title="CREATOR 5"></span><span style="width:23.000%;background:#C9BDA0" title="COMPETITOR 23"></span><span style="width:8.000%;background:#6B675C" title="UNKNOWN 8"></span></div></td>
+      <td class="tr-buyer">41</td>
+      <td class="tr-pct">41.0%</td>
+      <td class="tr-tot">100</td>
+    </tr><tr>
+      <td class="tr-rank">07</td>
+      <td class="tr-date">2026-05-31</td>
+      <td class="tr-text">Claude Opus 4.8 built a custom operating system for my entire business in 15 minutes. I took my</td>
+      <td class="tr-split"><div class="sb"><span style="width:39.000%;background:#E96A3C" title="BUYER 39"></span><span style="width:27.000%;background:#5C8C95" title="PEER 27"></span><span style="width:2.000%;background:#F0B24A" title="CREATOR 2"></span><span style="width:19.000%;background:#C9BDA0" title="COMPETITOR 19"></span><span style="width:13.000%;background:#6B675C" title="UNKNOWN 13"></span></div></td>
+      <td class="tr-buyer">39</td>
+      <td class="tr-pct">39.0%</td>
+      <td class="tr-tot">100</td>
+    </tr><tr>
+      <td class="tr-rank">08</td>
+      <td class="tr-date">2026-05-25</td>
+      <td class="tr-text">I went from 1,200 to 14,847 LinkedIn followers in 90 days. Here are the 4 levels of Claude that</td>
+      <td class="tr-split"><div class="sb"><span style="width:45.783%;background:#E96A3C" title="BUYER 38"></span><span style="width:20.482%;background:#5C8C95" title="PEER 17"></span><span style="width:20.482%;background:#C9BDA0" title="COMPETITOR 17"></span><span style="width:13.253%;background:#6B675C" title="UNKNOWN 11"></span></div></td>
+      <td class="tr-buyer">38</td>
+      <td class="tr-pct">45.8%</td>
+      <td class="tr-tot">83</td>
+    </tr><tr>
+      <td class="tr-rank">09</td>
+      <td class="tr-date">2026-05-23</td>
+      <td class="tr-text">I went from 1,200 followers to 14,847 on LinkedIn in 90 days. Here's the 4-level Claude system </td>
+      <td class="tr-split"><div class="sb"><span style="width:44.444%;background:#E96A3C" title="BUYER 36"></span><span style="width:28.395%;background:#5C8C95" title="PEER 23"></span><span style="width:4.938%;background:#F0B24A" title="CREATOR 4"></span><span style="width:17.284%;background:#C9BDA0" title="COMPETITOR 14"></span><span style="width:4.938%;background:#6B675C" title="UNKNOWN 4"></span></div></td>
+      <td class="tr-buyer">36</td>
+      <td class="tr-pct">44.4%</td>
+      <td class="tr-tot">81</td>
+    </tr><tr>
+      <td class="tr-rank">10</td>
+      <td class="tr-date">2026-06-02</td>
+      <td class="tr-text">Your Claude setup is WRONG! Here are 5 Claude Code Files Every Beginner MUST HAVE! (copy me) I </td>
+      <td class="tr-split"><div class="sb"><span style="width:59.259%;background:#E96A3C" title="BUYER 32"></span><span style="width:14.815%;background:#5C8C95" title="PEER 8"></span><span style="width:3.704%;background:#F0B24A" title="CREATOR 2"></span><span style="width:7.407%;background:#C9BDA0" title="COMPETITOR 4"></span><span style="width:14.815%;background:#6B675C" title="UNKNOWN 8"></span></div></td>
+      <td class="tr-buyer">32</td>
+      <td class="tr-pct">59.3%</td>
+      <td class="tr-tot">54</td>
+    </tr><tr>
+      <td class="tr-rank">11</td>
+      <td class="tr-date">2026-05-30</td>
+      <td class="tr-text">Stop watching Claude Code tutorials. I've watched over 327 of them. So I took everything that a</td>
+      <td class="tr-split"><div class="sb"><span style="width:32.000%;background:#E96A3C" title="BUYER 32"></span><span style="width:24.000%;background:#5C8C95" title="PEER 24"></span><span style="width:4.000%;background:#F0B24A" title="CREATOR 4"></span><span style="width:27.000%;background:#C9BDA0" title="COMPETITOR 27"></span><span style="width:13.000%;background:#6B675C" title="UNKNOWN 13"></span></div></td>
+      <td class="tr-buyer">32</td>
+      <td class="tr-pct">32.0%</td>
+      <td class="tr-tot">100</td>
+    </tr><tr>
+      <td class="tr-rank">12</td>
+      <td class="tr-date">2026-05-10</td>
+      <td class="tr-text">My channel had 60,000 subscribers and was growing 2x slower than every competitor in my niche. </td>
+      <td class="tr-split"><div class="sb"><span style="width:42.857%;background:#E96A3C" title="BUYER 30"></span><span style="width:18.571%;background:#5C8C95" title="PEER 13"></span><span style="width:8.571%;background:#F0B24A" title="CREATOR 6"></span><span style="width:21.429%;background:#C9BDA0" title="COMPETITOR 15"></span><span style="width:8.571%;background:#6B675C" title="UNKNOWN 6"></span></div></td>
+      <td class="tr-buyer">30</td>
+      <td class="tr-pct">42.9%</td>
+      <td class="tr-tot">70</td>
+    </tr><tr>
+      <td class="tr-rank">13</td>
+      <td class="tr-date">2026-06-02</td>
+      <td class="tr-text">My entire business used to live in 8 browser tabs. Now it lives in one dashboard that Claude bu</td>
+      <td class="tr-split"><div class="sb"><span style="width:66.667%;background:#E96A3C" title="BUYER 16"></span><span style="width:8.333%;background:#5C8C95" title="PEER 2"></span><span style="width:12.500%;background:#C9BDA0" title="COMPETITOR 3"></span><span style="width:12.500%;background:#6B675C" title="UNKNOWN 3"></span></div></td>
+      <td class="tr-buyer">16</td>
+      <td class="tr-pct">66.7%</td>
+      <td class="tr-tot">24</td>
+    </tr><tr>
+      <td class="tr-rank">14</td>
+      <td class="tr-date">2026-05-10</td>
+      <td class="tr-text">I spent 3 weeks testing every Claude Code command that actually moves the needle for business o</td>
+      <td class="tr-split"><div class="sb"><span style="width:35.897%;background:#E96A3C" title="BUYER 14"></span><span style="width:28.205%;background:#5C8C95" title="PEER 11"></span><span style="width:5.128%;background:#F0B24A" title="CREATOR 2"></span><span style="width:20.513%;background:#C9BDA0" title="COMPETITOR 8"></span><span style="width:10.256%;background:#6B675C" title="UNKNOWN 4"></span></div></td>
+      <td class="tr-buyer">14</td>
+      <td class="tr-pct">35.9%</td>
+      <td class="tr-tot">39</td>
+    </tr><tr>
+      <td class="tr-rank">15</td>
+      <td class="tr-date">2026-05-14</td>
+      <td class="tr-text">You are using Claude Code wrong. Most people use it to write content. That's the slow way. I us</td>
+      <td class="tr-split"><div class="sb"><span style="width:39.394%;background:#E96A3C" title="BUYER 13"></span><span style="width:36.364%;background:#5C8C95" title="PEER 12"></span><span style="width:6.061%;background:#F0B24A" title="CREATOR 2"></span><span style="width:18.182%;background:#C9BDA0" title="COMPETITOR 6"></span></div></td>
+      <td class="tr-buyer">13</td>
+      <td class="tr-pct">39.4%</td>
+      <td class="tr-tot">33</td>
+    </tr><tr>
+      <td class="tr-rank">16</td>
+      <td class="tr-date">2026-05-15</td>
+      <td class="tr-text">I built a system that made prospects reach out to me first. Before that, I hated what cold outr</td>
+      <td class="tr-split"><div class="sb"><span style="width:40.000%;background:#E96A3C" title="BUYER 10"></span><span style="width:20.000%;background:#5C8C95" title="PEER 5"></span><span style="width:8.000%;background:#F0B24A" title="CREATOR 2"></span><span style="width:32.000%;background:#C9BDA0" title="COMPETITOR 8"></span></div></td>
+      <td class="tr-buyer">10</td>
+      <td class="tr-pct">40.0%</td>
+      <td class="tr-tot">25</td>
+    </tr><tr>
+      <td class="tr-rank">17</td>
+      <td class="tr-date">2026-05-13</td>
+      <td class="tr-text">I built a system that replaced cold outreach entirely. No more DMs that feel spammy. No more co</td>
+      <td class="tr-split"><div class="sb"><span style="width:30.303%;background:#E96A3C" title="BUYER 10"></span><span style="width:24.242%;background:#5C8C95" title="PEER 8"></span><span style="width:6.061%;background:#F0B24A" title="CREATOR 2"></span><span style="width:33.333%;background:#C9BDA0" title="COMPETITOR 11"></span><span style="width:6.061%;background:#6B675C" title="UNKNOWN 2"></span></div></td>
+      <td class="tr-buyer">10</td>
+      <td class="tr-pct">30.3%</td>
+      <td class="tr-tot">33</td>
+    </tr><tr>
+      <td class="tr-rank">18</td>
+      <td class="tr-date">2026-05-12</td>
+      <td class="tr-text">I closed $250K+ in deals without sending a single cold DM. If you hate feeling like you're just</td>
+      <td class="tr-split"><div class="sb"><span style="width:29.412%;background:#E96A3C" title="BUYER 10"></span><span style="width:23.529%;background:#5C8C95" title="PEER 8"></span><span style="width:32.353%;background:#C9BDA0" title="COMPETITOR 11"></span><span style="width:14.706%;background:#6B675C" title="UNKNOWN 5"></span></div></td>
+      <td class="tr-buyer">10</td>
+      <td class="tr-pct">29.4%</td>
+      <td class="tr-tot">34</td>
+    </tr><tr>
+      <td class="tr-rank">19</td>
+      <td class="tr-date">2026-05-11</td>
+      <td class="tr-text">I built 6 AI agents that pay for themselves. Most people are using AI like a faster typewriter.</td>
+      <td class="tr-split"><div class="sb"><span style="width:37.500%;background:#E96A3C" title="BUYER 9"></span><span style="width:16.667%;background:#5C8C95" title="PEER 4"></span><span style="width:33.333%;background:#C9BDA0" title="COMPETITOR 8"></span><span style="width:12.500%;background:#6B675C" title="UNKNOWN 3"></span></div></td>
+      <td class="tr-buyer">9</td>
+      <td class="tr-pct">37.5%</td>
+      <td class="tr-tot">24</td>
+    </tr><tr>
+      <td class="tr-rank">20</td>
+      <td class="tr-date">2026-06-05</td>
+      <td class="tr-text">I spent 67 hours cold outreaching last month. One reply. Zero clients. I felt like I was becomi</td>
+      <td class="tr-split"><div class="sb"><span style="width:31.034%;background:#E96A3C" title="BUYER 9"></span><span style="width:20.690%;background:#5C8C95" title="PEER 6"></span><span style="width:3.448%;background:#F0B24A" title="CREATOR 1"></span><span style="width:37.931%;background:#C9BDA0" title="COMPETITOR 11"></span><span style="width:6.897%;background:#6B675C" title="UNKNOWN 2"></span></div></td>
+      <td class="tr-buyer">9</td>
+      <td class="tr-pct">31.0%</td>
+      <td class="tr-tot">29</td>
+    </tr><tr>
+      <td class="tr-rank">21</td>
+      <td class="tr-date">2026-06-04</td>
+      <td class="tr-text">I built 7 Claude Code SKILLS that replaced my entire content team. Here's how: → Angles: scans </td>
+      <td class="tr-split"><div class="sb"><span style="width:31.034%;background:#E96A3C" title="BUYER 9"></span><span style="width:20.690%;background:#5C8C95" title="PEER 6"></span><span style="width:3.448%;background:#F0B24A" title="CREATOR 1"></span><span style="width:34.483%;background:#C9BDA0" title="COMPETITOR 10"></span><span style="width:10.345%;background:#6B675C" title="UNKNOWN 3"></span></div></td>
+      <td class="tr-buyer">9</td>
+      <td class="tr-pct">31.0%</td>
+      <td class="tr-tot">29</td>
+    </tr><tr>
+      <td class="tr-rank">22</td>
+      <td class="tr-date">2026-06-04</td>
+      <td class="tr-text">5 files. That's the difference between Claude sounding like you and Claude sounding like everyo</td>
+      <td class="tr-split"><div class="sb"><span style="width:44.444%;background:#E96A3C" title="BUYER 8"></span><span style="width:5.556%;background:#5C8C95" title="PEER 1"></span><span style="width:5.556%;background:#F0B24A" title="CREATOR 1"></span><span style="width:44.444%;background:#C9BDA0" title="COMPETITOR 8"></span></div></td>
+      <td class="tr-buyer">8</td>
+      <td class="tr-pct">44.4%</td>
+      <td class="tr-tot">18</td>
+    </tr><tr>
+      <td class="tr-rank">23</td>
+      <td class="tr-date">2026-05-08</td>
+      <td class="tr-text">I spent 3 days building a memory layer for Claude that never resets. Most people are using AI l</td>
+      <td class="tr-split"><div class="sb"><span style="width:38.095%;background:#E96A3C" title="BUYER 8"></span><span style="width:19.048%;background:#5C8C95" title="PEER 4"></span><span style="width:4.762%;background:#F0B24A" title="CREATOR 1"></span><span style="width:33.333%;background:#C9BDA0" title="COMPETITOR 7"></span><span style="width:4.762%;background:#6B675C" title="UNKNOWN 1"></span></div></td>
+      <td class="tr-buyer">8</td>
+      <td class="tr-pct">38.1%</td>
+      <td class="tr-tot">21</td>
+    </tr><tr>
+      <td class="tr-rank">24</td>
+      <td class="tr-date">2026-05-06</td>
+      <td class="tr-text">My AI tooling costs less than $3.50/day. Most people building with Claude are quietly burning 3</td>
+      <td class="tr-split"><div class="sb"><span style="width:58.333%;background:#E96A3C" title="BUYER 7"></span><span style="width:16.667%;background:#5C8C95" title="PEER 2"></span><span style="width:25.000%;background:#C9BDA0" title="COMPETITOR 3"></span></div></td>
+      <td class="tr-buyer">7</td>
+      <td class="tr-pct">58.3%</td>
+      <td class="tr-tot">12</td>
+    </tr><tr>
+      <td class="tr-rank">25</td>
+      <td class="tr-date">2026-05-16</td>
+      <td class="tr-text">I built a step-by-step visibility system for experts who are tired of watching less skilled peo</td>
+      <td class="tr-split"><div class="sb"><span style="width:33.333%;background:#E96A3C" title="BUYER 7"></span><span style="width:38.095%;background:#5C8C95" title="PEER 8"></span><span style="width:4.762%;background:#F0B24A" title="CREATOR 1"></span><span style="width:23.810%;background:#C9BDA0" title="COMPETITOR 5"></span></div></td>
+      <td class="tr-buyer">7</td>
+      <td class="tr-pct">33.3%</td>
+      <td class="tr-tot">21</td>
+    </tr><tr>
+      <td class="tr-rank">26</td>
+      <td class="tr-date">2026-05-07</td>
+      <td class="tr-text">I built a content pipeline with 6 AI agents that runs 24/7. No editing. No manual steps. Zero h</td>
+      <td class="tr-split"><div class="sb"><span style="width:35.294%;background:#E96A3C" title="BUYER 6"></span><span style="width:17.647%;background:#5C8C95" title="PEER 3"></span><span style="width:29.412%;background:#C9BDA0" title="COMPETITOR 5"></span><span style="width:17.647%;background:#6B675C" title="UNKNOWN 3"></span></div></td>
+      <td class="tr-buyer">6</td>
+      <td class="tr-pct">35.3%</td>
+      <td class="tr-tot">17</td>
+    </tr><tr>
+      <td class="tr-rank">27</td>
+      <td class="tr-date">2026-05-25</td>
+      <td class="tr-text">I went from 3 hours of content planning every Sunday to zero. Here's what I built instead: An A</td>
+      <td class="tr-split"><div class="sb"><span style="width:33.333%;background:#E96A3C" title="BUYER 6"></span><span style="width:44.444%;background:#5C8C95" title="PEER 8"></span><span style="width:11.111%;background:#F0B24A" title="CREATOR 2"></span><span style="width:5.556%;background:#C9BDA0" title="COMPETITOR 1"></span><span style="width:5.556%;background:#6B675C" title="UNKNOWN 1"></span></div></td>
+      <td class="tr-buyer">6</td>
+      <td class="tr-pct">33.3%</td>
+      <td class="tr-tot">18</td>
+    </tr><tr>
+      <td class="tr-rank">28</td>
+      <td class="tr-date">2026-05-09</td>
+      <td class="tr-text">My AI agents kept breaking mid-task. Not because the tools were bad. Because the agents kept lo</td>
+      <td class="tr-split"><div class="sb"><span style="width:33.333%;background:#E96A3C" title="BUYER 6"></span><span style="width:22.222%;background:#5C8C95" title="PEER 4"></span><span style="width:5.556%;background:#F0B24A" title="CREATOR 1"></span><span style="width:33.333%;background:#C9BDA0" title="COMPETITOR 6"></span><span style="width:5.556%;background:#6B675C" title="UNKNOWN 1"></span></div></td>
+      <td class="tr-buyer">6</td>
+      <td class="tr-pct">33.3%</td>
+      <td class="tr-tot">18</td>
+    </tr><tr>
+      <td class="tr-rank">29</td>
+      <td class="tr-date">2026-05-11</td>
+      <td class="tr-text">I replaced my VA, my designer, and my social media manager. Built the replacement in 48 hours. </td>
+      <td class="tr-split"><div class="sb"><span style="width:25.000%;background:#E96A3C" title="BUYER 5"></span><span style="width:30.000%;background:#5C8C95" title="PEER 6"></span><span style="width:35.000%;background:#C9BDA0" title="COMPETITOR 7"></span><span style="width:10.000%;background:#6B675C" title="UNKNOWN 2"></span></div></td>
+      <td class="tr-buyer">5</td>
+      <td class="tr-pct">25.0%</td>
+      <td class="tr-tot">20</td>
+    </tr><tr>
+      <td class="tr-rank">30</td>
+      <td class="tr-date">2026-05-08</td>
+      <td class="tr-text">120,000+ LinkedIn impression with Claude Code + Obsidian I went from re-explaining myself to Cl</td>
+      <td class="tr-split"><div class="sb"><span style="width:80.000%;background:#E96A3C" title="BUYER 4"></span><span style="width:20.000%;background:#C9BDA0" title="COMPETITOR 1"></span></div></td>
+      <td class="tr-buyer">4</td>
+      <td class="tr-pct">80.0%</td>
+      <td class="tr-tot">5</td>
+    </tr><tr>
+      <td class="tr-rank">31</td>
+      <td class="tr-date">2026-05-27</td>
+      <td class="tr-text">Claude forgets who it is every session. This file fixes it. Every time you open a new Claude se</td>
+      <td class="tr-split"><div class="sb"><span style="width:50.000%;background:#E96A3C" title="BUYER 4"></span><span style="width:25.000%;background:#5C8C95" title="PEER 2"></span><span style="width:12.500%;background:#F0B24A" title="CREATOR 1"></span><span style="width:12.500%;background:#C9BDA0" title="COMPETITOR 1"></span></div></td>
+      <td class="tr-buyer">4</td>
+      <td class="tr-pct">50.0%</td>
+      <td class="tr-tot">8</td>
+    </tr><tr>
+      <td class="tr-rank">32</td>
+      <td class="tr-date">2026-05-17</td>
+      <td class="tr-text">I built a playbook for business owners who hate selling. Not because they're bad at it. Because</td>
+      <td class="tr-split"><div class="sb"><span style="width:25.000%;background:#E96A3C" title="BUYER 4"></span><span style="width:25.000%;background:#5C8C95" title="PEER 4"></span><span style="width:25.000%;background:#C9BDA0" title="COMPETITOR 4"></span><span style="width:25.000%;background:#6B675C" title="UNKNOWN 4"></span></div></td>
+      <td class="tr-buyer">4</td>
+      <td class="tr-pct">25.0%</td>
+      <td class="tr-tot">16</td>
+    </tr><tr>
+      <td class="tr-rank">33</td>
+      <td class="tr-date">2026-05-30</td>
+      <td class="tr-text">104 modules. 6 courses. One person. No team. No agency. No 18-month timeline. Here's exactly ho</td>
+      <td class="tr-split"><div class="sb"><span style="width:66.667%;background:#E96A3C" title="BUYER 2"></span><span style="width:33.333%;background:#C9BDA0" title="COMPETITOR 1"></span></div></td>
+      <td class="tr-buyer">2</td>
+      <td class="tr-pct">66.7%</td>
+      <td class="tr-tot">3</td>
+    </tr><tr>
+      <td class="tr-rank">34</td>
+      <td class="tr-date">2026-05-21</td>
+      <td class="tr-text">I haven't done outreach in 8 months. 3-5 inbound leads still land every week. No cold emails. N</td>
+      <td class="tr-split"><div class="sb"><span style="width:28.571%;background:#E96A3C" title="BUYER 2"></span><span style="width:28.571%;background:#5C8C95" title="PEER 2"></span><span style="width:14.286%;background:#F0B24A" title="CREATOR 1"></span><span style="width:14.286%;background:#C9BDA0" title="COMPETITOR 1"></span><span style="width:14.286%;background:#6B675C" title="UNKNOWN 1"></span></div></td>
+      <td class="tr-buyer">2</td>
+      <td class="tr-pct">28.6%</td>
+      <td class="tr-tot">7</td>
+    </tr><tr>
+      <td class="tr-rank">35</td>
+      <td class="tr-date">2026-05-18</td>
+      <td class="tr-text">I analyzed my last 47 LinkedIn posts. The finding embarrassed me. Zero of them failed because t</td>
+      <td class="tr-split"><div class="sb"><span style="width:28.571%;background:#E96A3C" title="BUYER 2"></span><span style="width:28.571%;background:#5C8C95" title="PEER 2"></span><span style="width:42.857%;background:#C9BDA0" title="COMPETITOR 3"></span></div></td>
+      <td class="tr-buyer">2</td>
+      <td class="tr-pct">28.6%</td>
+      <td class="tr-tot">7</td>
+    </tr><tr>
+      <td class="tr-rank">36</td>
+      <td class="tr-date">2026-05-07</td>
+      <td class="tr-text">Nobody outside your network knows you exist. That's not a skill problem. It's a visibility prob</td>
+      <td class="tr-split"><div class="sb"><span style="width:28.571%;background:#E96A3C" title="BUYER 2"></span><span style="width:42.857%;background:#5C8C95" title="PEER 3"></span><span style="width:28.571%;background:#F0B24A" title="CREATOR 2"></span></div></td>
+      <td class="tr-buyer">2</td>
+      <td class="tr-pct">28.6%</td>
+      <td class="tr-tot">7</td>
+    </tr><tr>
+      <td class="tr-rank">37</td>
+      <td class="tr-date">2026-05-22</td>
+      <td class="tr-text">Claude Code has made me $221K+ in the last 12 months. Here's how: It's not from coding. It's fr</td>
+      <td class="tr-split"><div class="sb"><span style="width:25.000%;background:#E96A3C" title="BUYER 2"></span><span style="width:12.500%;background:#5C8C95" title="PEER 1"></span><span style="width:12.500%;background:#F0B24A" title="CREATOR 1"></span><span style="width:25.000%;background:#C9BDA0" title="COMPETITOR 2"></span><span style="width:25.000%;background:#6B675C" title="UNKNOWN 2"></span></div></td>
+      <td class="tr-buyer">2</td>
+      <td class="tr-pct">25.0%</td>
+      <td class="tr-tot">8</td>
+    </tr><tr>
+      <td class="tr-rank">38</td>
+      <td class="tr-date">2026-05-27</td>
+      <td class="tr-text">Most people treat "consistency" like it's the whole answer. It's not. Consistency without proof</td>
+      <td class="tr-split"><div class="sb"><span style="width:50.000%;background:#E96A3C" title="BUYER 1"></span><span style="width:50.000%;background:#C9BDA0" title="COMPETITOR 1"></span></div></td>
+      <td class="tr-buyer">1</td>
+      <td class="tr-pct">50.0%</td>
+      <td class="tr-tot">2</td>
+    </tr><tr>
+      <td class="tr-rank">39</td>
+      <td class="tr-date">2026-05-24</td>
+      <td class="tr-text">I spent 15 years never being offered a leadership role. Then I got laid off. And I bet on mysel</td>
+      <td class="tr-split"><div class="sb"><span style="width:33.333%;background:#E96A3C" title="BUYER 1"></span><span style="width:33.333%;background:#5C8C95" title="PEER 1"></span><span style="width:33.333%;background:#C9BDA0" title="COMPETITOR 1"></span></div></td>
+      <td class="tr-buyer">1</td>
+      <td class="tr-pct">33.3%</td>
+      <td class="tr-tot">3</td>
+    </tr><tr>
+      <td class="tr-rank">40</td>
+      <td class="tr-date">2026-05-14</td>
+      <td class="tr-text">I sent 2,000 cold emails last year. Zero clients. I hate the cold DMs that feel spammy. I hate </td>
+      <td class="tr-split"><div class="sb"><span style="width:33.333%;background:#E96A3C" title="BUYER 1"></span><span style="width:33.333%;background:#C9BDA0" title="COMPETITOR 1"></span><span style="width:33.333%;background:#6B675C" title="UNKNOWN 1"></span></div></td>
+      <td class="tr-buyer">1</td>
+      <td class="tr-pct">33.3%</td>
+      <td class="tr-tot">3</td>
+    </tr><tr>
+      <td class="tr-rank">41</td>
+      <td class="tr-date">2026-05-20</td>
+      <td class="tr-text">AI agents are broken! Vercel just fixed them. The last time someone built a programming languag</td>
+      <td class="tr-split"><div class="sb"><span style="width:20.000%;background:#E96A3C" title="BUYER 1"></span><span style="width:40.000%;background:#5C8C95" title="PEER 2"></span><span style="width:40.000%;background:#C9BDA0" title="COMPETITOR 2"></span></div></td>
+      <td class="tr-buyer">1</td>
+      <td class="tr-pct">20.0%</td>
+      <td class="tr-tot">5</td>
+    </tr><tr>
+      <td class="tr-rank">42</td>
+      <td class="tr-date">2026-05-18</td>
+      <td class="tr-text">I deleted 47 LinkedIn drafts before I posted a single one. Not because I had nothing to say. Be</td>
+      <td class="tr-split"><div class="sb"><span style="width:20.000%;background:#E96A3C" title="BUYER 1"></span><span style="width:20.000%;background:#5C8C95" title="PEER 1"></span><span style="width:60.000%;background:#C9BDA0" title="COMPETITOR 3"></span></div></td>
+      <td class="tr-buyer">1</td>
+      <td class="tr-pct">20.0%</td>
+      <td class="tr-tot">5</td>
+    </tr><tr>
+      <td class="tr-rank">43</td>
+      <td class="tr-date">2026-05-31</td>
+      <td class="tr-text">Nobody invested in me. Not a manager. Not a mentor. Not a company that saw potential and decide</td>
+      <td class="tr-split"><div class="sb"><span style="width:100.000%;background:#5C8C95" title="PEER 1"></span></div></td>
+      <td class="tr-buyer">0</td>
+      <td class="tr-pct">0.0%</td>
+      <td class="tr-tot">1</td>
+    </tr><tr>
+      <td class="tr-rank">44</td>
+      <td class="tr-date">2026-05-29</td>
+      <td class="tr-text">Every coaching call I run generates a LinkedIn post. Not because I'm mining my clients for cont</td>
+      <td class="tr-split"><div class="sb"></div></td>
+      <td class="tr-buyer">0</td>
+      <td class="tr-pct">0.0%</td>
+      <td class="tr-tot">0</td>
+    </tr><tr>
+      <td class="tr-rank">45</td>
+      <td class="tr-date">2026-05-28</td>
+      <td class="tr-text">A member in my community generated 2,000 leads in 2 weeks. Then abandoned the system that did i</td>
+      <td class="tr-split"><div class="sb"><span style="width:33.333%;background:#F0B24A" title="CREATOR 1"></span><span style="width:66.667%;background:#C9BDA0" title="COMPETITOR 2"></span></div></td>
+      <td class="tr-buyer">0</td>
+      <td class="tr-pct">0.0%</td>
+      <td class="tr-tot">3</td>
+    </tr></tbody>
+    </table></div>
+    <div class="meta" style="margin-top:16px;display:flex;gap:18px;flex-wrap:wrap">
+      <span><span class="dot-key" style="background:var(--orange)"></span>Buyer</span>
+      <span><span class="dot-key" style="background:var(--teal)"></span>Peer</span>
+      <span><span class="dot-key" style="background:var(--amber)"></span>Creator</span>
+      <span><span class="dot-key" style="background:var(--shadow)"></span>Competitor</span>
+      <span><span class="dot-key" style="background:var(--dim)"></span>Unknown</span>
+    </div>
+  </section>
+
+  <!-- 05 CONTENT BRIEF -->
+  <section>
+    <div class="sec-head"><div class="n">05</div><h2>The Brief &mdash; What To Write Monday</h2>
+      <div class="note meta">Modeled on top vs bottom posts by buyer count</div></div>
+
+    <div class="brief-tldr">
+      <div class="lead">Your format is right. Your <b>topic altitude</b> and <b>who you address</b> are what flip the room.</div>
+      <p>Best and worst posts use the same arrow-list, lead-magnet structure. When you talk to <b style="color:var(--orange)">beginners</b> ("no coding required, you can't break it, ship today, free tools") buyers show up 44&ndash;52 per post. When you flex about <b style="color:var(--shadow)">running your business</b> ("I replaced my team", "agent memory architecture", "anti-sales for experts") buyers collapse to 4&ndash;6 and peers + competitors fill the comments. &rarr; <b style="color:var(--orange)">Write for the person who hasn't started yet.</b></p>
+    </div>
+
+    <div class="brief-grid">
+      <div class="brief-col">
+        <h3><span class="x" style="color:var(--orange)">&uarr;</span> 3 Angles To Lean Into</h3>
+        <div class="brief-item"><div class="t"><span class="ang">01</span>"You can't break it" &mdash; kill the fear of starting</div><div class="d">Name the exact thing beginners are scared of ("what if I break something", "I'm not technical") and dismantle it. <em>Highest-trust buyer angle you have.</em></div></div>
+        <div class="brief-item"><div class="t"><span class="ang">02</span>Free, one-command tools (comment-to-DM lists)</div><div class="d">"Here are X open-source Claude skills most people don't know exist. All free. Comment WORD." Zero-risk, deployable &mdash; buyers self-select by commenting.</div></div>
+        <div class="brief-item"><div class="t"><span class="ang">03</span>"Here's the exact system" &rarr; visible result + income</div><div class="d">Tie one tactical Claude Code workflow to a result a beginner wants (followers, first $, a finished thing), with named tools and same-day shippability.</div></div>
+      </div>
+      <div class="brief-col">
+        <h3><span class="x" style="color:var(--shadow)">&darr;</span> 3 To Cut Or Adjust</h3>
+        <div class="brief-item"><div class="t"><span class="ang" style="color:var(--shadow)">01</span>"I replaced my team / $5 a day" flexes</div><div class="d"><em>Reframe:</em> pick the ONE piece a beginner could build this week and teach that, in their shoes &mdash; "here's the first agent to build, start here".</div></div>
+        <div class="brief-item"><div class="t"><span class="ang" style="color:var(--shadow)">02</span>Advanced agent-architecture deep-dives</div><div class="d"><em>Cut or translate.</em> Virtual filesystems, agent memory, context engineering pull engineers + competitors. If it isn't "ship today, no code", it isn't for your buyer.</div></div>
+        <div class="brief-item"><div class="t"><span class="ang" style="color:var(--shadow)">03</span>Sales playbooks for "experts" &amp; "business owners"</div><div class="d"><em>Re-aim.</em> Target the beginner wanting their <em>first</em> inbound lead. Drop "business owners" / "experts" from hooks &mdash; say "you" and "if you're just starting".</div></div>
+      </div>
+    </div>
+
+    <div class="tmpl">
+      <div class="tmpl-head"><span>Reusable Template &mdash; Stripped Of Specifics</span><span>Modeled on #1: "Stop watching tutorials" &middot; 52 buyers / 52%</span></div>
+<pre><span class="hi">[PATTERN-INTERRUPT IMPERATIVE &mdash; &le;10 words. "Stop [the thing they passively do]."]</span>
+
+<span class="ph">[One-line confession + a hard number that proves the problem.]</span>
+There's only one thing that works:
+
+<span class="hi">[The reframe &mdash; 1&ndash;3 words on its own line. "Building something."]</span>
+
+<span class="ph">[2 lines: the old way you wasted time on, concrete and slightly self-deprecating.]</span>
+
+So I took everything that actually works, made it beginner-friendly, and packaged it into one place.
+
+<span class="ph">[Name the resource.]</span>
+&rarr; <span class="ph">[Deliverable 1 &mdash; tangible, ship-today benefit]</span>
+&rarr; <span class="ph">[Deliverable 2 &mdash; a number: X skills, Y prompts, Z tools]</span>
+&rarr; <span class="ph">[Deliverable 3 &mdash; "real, not demos / not theory"]</span>
+&rarr; No coding experience required
+&rarr; Built for <span class="ph">[beginner ICP]</span> who want to build, not just watch
+
+<span class="ph">[Proof line: what they walk away with + social proof number.]</span>
+
+Like + comment <span class="hi">"[KEYWORD]"</span> and I'll send you the link.
+
+P.S. <span class="ph">[Cost-of-inaction &mdash; they'll consume content this week regardless; will they act?]</span></pre>
+      <div class="nonneg">
+        <span><b>1</b>Number in line one</span>
+        <span><b>2</b>One-word reframe on its own line</span>
+        <span><b>3</b>Arrow list of concrete deliverables</span>
+        <span><b>4</b>Explicit beginner reassurance</span>
+        <span><b>5</b>One-word comment CTA</span>
+      </div>
+    </div>
+
+    <div class="tmpl draft">
+      <div class="tmpl-head"><span style="color:var(--orange)">&darr; Monday Draft &mdash; Ready To Post</span><span>Angle 01 &middot; kill the fear of starting &middot; filled from the template above</span></div>
+<pre><span class="hi">You've saved 40 AI tutorials this month. You've opened zero.</span>
+
+You keep telling yourself you'll start once you understand it.
+
+There's only one thing that works:
+
+<span class="hi">Starting.</span>
+
+I watched 348 Claude Code tutorials before I built a single thing. Took notes I never reread. Bookmarked folders I never opened again.
+
+So I took the stuff that actually works, made it beginner-friendly, and put it in one place.
+
+That's the Claude Code Club.
+&rarr; Weekly builds you can ship the same day you learn them
+&rarr; 50 Skills, 110 prompts, and 12 MCPs ready to deploy
+&rarr; Real tools you'll actually use &mdash; not demos, not theory
+&rarr; No coding experience required. You literally can't break anything.
+&rarr; Built for people who want to build, not just watch
+
+You ship something real in your first week. Alongside 4,360+ builders doing the same.
+
+Like + comment <span class="hi">"BUILD"</span> and I'll send you the link.
+
+P.S. You'll watch more AI content this week no matter what. The only question is whether you do anything with it.</pre>
+      <div class="nonneg">
+        <span><b>&check;</b>Number in line one (40 / zero)</span>
+        <span><b>&check;</b>"Starting." reframe on its own line</span>
+        <span><b>&check;</b>Arrow list of concrete deliverables</span>
+        <span><b>&check;</b>"No coding required / can't break it"</span>
+        <span><b>&check;</b>One-word CTA: "BUILD"</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="meta">The Build Room &nbsp;/&nbsp; Audience Quality Audit</div>
+    <div class="meta">Source: linkedin-audit-classified.csv &nbsp;&middot;&nbsp; Engagement = classified comments</div>
+  </footer>
+</div>
+</body></html>

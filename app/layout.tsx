@@ -2,18 +2,19 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import Providers from './providers'
-import { PRODUCT_NAME } from '@/lib/product'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: PRODUCT_NAME,
-  description: 'Kelas online belajar membangun software dengan Claude Code',
+  title: 'Claude Code Club — Portal',
+  description: 'Personal learning portal for Claude Code Club',
+  // Private portal: keep it out of search engines.
+  robots: { index: false, follow: false },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <Providers>{children}</Providers>
       </body>

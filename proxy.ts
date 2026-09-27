@@ -1,26 +1,23 @@
 import { getToken } from 'next-auth/jwt'
 import { NextRequest, NextResponse } from 'next/server'
 
-const PUBLIC_PATHS = ['/join', '/login', '/checkout']
-
-function isPublic(pathname: string) {
-  return PUBLIC_PATHS.some(p => pathname === p || pathname.startsWith(`${p}/`))
-}
-
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
   const secret = process.env.NEXTAUTH_SECRET
   const token = secret ? await getToken({ req: request, secret }) : null
+  const isLogin = pathname === '/login'
 
-  if (!token && !isPublic(pathname)) {
-    return NextResponse.redirect(new URL('/join', request.url))
+  if (!token && !isLogin) {
+    return NextResponse.redirect(new URL('/login', request.url))
   }
-  if (token && (pathname === '/login' || pathname === '/join')) {
+  if (token && isLogin) {
     return NextResponse.redirect(new URL('/', request.url))
   }
   return NextResponse.next()
 }
 
+// Also gates PDFs and resource downloads; images are left out so the login page loads fast
+// (the whole deployment additionally sits behind Vercel Authentication).
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|webp|ico)$).*)'],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|webp|gif|ico)$).*)'],
 }

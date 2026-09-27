@@ -12,21 +12,6 @@ async function migrate() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT now()
     )
   `
-  await sql`
-    CREATE TABLE IF NOT EXISTS orders (
-      id SERIAL PRIMARY KEY,
-      merchant_ref TEXT UNIQUE NOT NULL,
-      tripay_reference TEXT,
-      customer_name TEXT NOT NULL,
-      customer_email TEXT NOT NULL,
-      amount INTEGER NOT NULL,
-      status TEXT NOT NULL DEFAULT 'pending',
-      checkout_url TEXT,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-      paid_at TIMESTAMPTZ
-    )
-  `
-  await sql`CREATE INDEX IF NOT EXISTS orders_status_idx ON orders (status)`
 
   // Admin account from env, so the owner can sign in without buying or running SQL.
   // Re-applied on every cold start, so changing ADMIN_PASSWORD_HASH in Vercel resets the password.

@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CLONE YOURSELF · One video, a week of shorts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#E8DCC4;
+  --bone:#F2E9D6;
+  --orange:#E96A3C;
+  --orange-soft:#F4A584;
+  --charcoal:#1C1B17;
+  --navy:#1F2A3A;
+  --line:#C9BDA0;
+  --ink-soft:#5A5347;
+  --disp:'Anton',sans-serif;
+  --sans:'Inter',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--charcoal);font-family:var(--sans);font-weight:400;line-height:1.7;overflow-x:hidden}
+
+/* grain on everything — static fixed layer, no blend mode (blend modes repaint the whole viewport every scroll frame) */
+body::after{
+  content:'';position:fixed;inset:0;z-index:99;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+::selection{background:var(--orange);color:var(--paper)}
+em{font-style:normal;color:var(--orange)}
+b{font-weight:600;color:var(--charcoal)}
+a{color:inherit}
+
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;
+  padding:18px 4vw;font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:500;
+  color:var(--charcoal);background:linear-gradient(to bottom,var(--paper),transparent);
+}
+nav .dot{color:var(--orange)}
+
+/* ── HERO · typographic riso ── */
+.hero{position:relative;min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:14vh 4vw 10vh;overflow:hidden}
+.hero::before{
+  content:'';position:absolute;inset:0;z-index:0;opacity:.5;
+  background-image:radial-gradient(var(--orange-soft) 1.1px,transparent 1.2px);
+  background-size:12px 12px;
+  -webkit-mask-image:linear-gradient(115deg,#000 0%,transparent 52%);
+  mask-image:linear-gradient(115deg,#000 0%,transparent 52%);
+}
+.hero-in{position:relative;z-index:1;max-width:1180px;margin:0 auto;width:100%}
+.eye{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:26px;font-weight:700}
+h1{font-family:var(--disp);font-weight:400;font-size:clamp(72px,15vw,210px);line-height:.84;letter-spacing:-.01em;text-transform:uppercase;color:var(--charcoal)}
+h1 .o{color:var(--orange);position:relative}
+.lede{margin-top:34px;max-width:600px;font-size:21px;line-height:1.6;color:var(--ink-soft)}
+.lede b{color:var(--charcoal)}
+.herometa{margin-top:46px;display:flex;gap:28px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.herometa span b{color:var(--orange);font-weight:700}
+.scrollcue{position:absolute;right:4vw;bottom:5vh;z-index:1;font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);writing-mode:vertical-rl}
+
+/* ── sections ── */
+section{position:relative;padding:15vh 4vw}
+.wrap{max-width:1180px;margin:0 auto}
+.k{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);font-weight:700;margin-bottom:22px}
+h2{font-family:var(--disp);font-weight:400;font-size:clamp(38px,6vw,82px);line-height:.96;letter-spacing:-.005em;text-transform:uppercase;margin-bottom:26px}
+h2 em{color:var(--orange)}
+.body{max-width:56ch;color:var(--ink-soft);font-size:20px;line-height:1.72}
+.body + .body{margin-top:18px}
+.body b{color:var(--charcoal)}
+
+/* thesis + index */
+.thesis h2{max-width:16ch}
+.pieces{margin-top:9vh;border-top:2px solid var(--charcoal)}
+.piece{
+  display:grid;grid-template-columns:78px 1fr 1.15fr;gap:30px;align-items:baseline;
+  padding:26px 0;border-bottom:1px solid var(--line);cursor:pointer;text-decoration:none;transition:padding-left .35s ease,background .25s ease;
+}
+.piece:hover{padding-left:16px;background:linear-gradient(to right,var(--bone),transparent)}
+.piece .n{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--orange)}
+.piece .t{font-family:var(--disp);font-weight:400;font-size:clamp(22px,2.6vw,34px);text-transform:uppercase;line-height:1}
+.piece .d{font-size:16px;color:var(--ink-soft);line-height:1.5}
+
+/* lesson grid */
+.lesson .grid{display:grid;grid-template-columns:1fr 1fr;gap:6vw;align-items:start}
+.law{margin-top:26px;display:flex;flex-direction:column;gap:15px}
+.law div{position:relative;padding-left:26px;font-size:18px;color:var(--ink-soft);line-height:1.5}
+.law div::before{content:'→';position:absolute;left:0;top:0;color:var(--orange);font-family:var(--mono);font-weight:700;font-size:16px}
+.law b{color:var(--charcoal);font-weight:600}
+
+/* prompt card */
+.prompt{margin-top:34px;background:var(--bone);border:1.5px solid var(--charcoal);border-radius:3px;overflow:hidden;box-shadow:5px 6px 0 var(--orange-soft)}
+.prompt .bar{display:flex;justify-content:space-between;align-items:center;padding:13px 18px;border-bottom:1.5px solid var(--charcoal);background:var(--paper)}
+.prompt .bar span{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--charcoal);font-weight:700}
+.copybtn{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;cursor:pointer;background:var(--charcoal);border:1.5px solid var(--charcoal);border-radius:2px;color:var(--paper);padding:7px 15px;transition:.2s}
+.copybtn:hover{background:var(--orange);border-color:var(--orange)}
+.prompt pre{padding:24px;white-space:pre-wrap;font-family:var(--mono);font-size:14.5px;line-height:1.8;color:var(--charcoal)}
+
+/* labelled formula box */
+.formula{margin-top:24px;padding:26px;background:var(--bone);border:1.5px solid var(--charcoal);border-radius:3px;font-family:var(--mono);font-size:16px;line-height:2;color:var(--ink-soft)}
+.formula b{color:var(--orange);font-weight:700}
+
+/* band */
+.band{padding:18vh 4vw;text-align:center;background:var(--charcoal);color:var(--paper)}
+.band h2{max-width:22ch;margin:0 auto;color:var(--paper)}
+.band h2 em{color:var(--orange-soft)}
+.band .k{justify-content:center;text-align:center}
+
+/* master */
+.master{background:var(--bone);border-top:2px solid var(--charcoal);border-bottom:2px solid var(--charcoal)}
+.master .prompt{max-width:880px;margin:34px auto 0;background:var(--paper)}
+.master h2{text-align:center;max-width:none}
+.master .k{text-align:center}
+.master .body{margin:0 auto;text-align:center}
+
+/* reserve / cta */
+.reserve{text-align:center;padding:20vh 4vw}
+.cta{display:inline-block;margin-top:38px;font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;background:var(--charcoal);color:var(--paper);padding:20px 46px;border-radius:2px;text-decoration:none;border:2px solid var(--charcoal);transition:.25s;box-shadow:5px 6px 0 var(--orange)}
+.cta:hover{background:var(--orange);border-color:var(--orange);box-shadow:5px 6px 0 var(--charcoal)}
+
+footer{position:relative;min-height:160px;display:flex;align-items:center;justify-content:center;border-top:2px solid var(--charcoal);font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);background:var(--paper)}
+footer em{color:var(--orange)}
+
+.reveal{opacity:0;transform:translateY(36px)}
+
+/* ════ BUILT RISO GRAPHICS ════ */
+.figcap{margin-top:16px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);display:flex;justify-content:space-between;gap:18px}
+.figcap em{color:var(--orange)}
+
+/* leverage fan-out (thesis) */
+.lev{margin-top:8vh;display:grid;grid-template-columns:auto auto 1fr;gap:26px;align-items:center}
+.lev-node{border:1.5px solid var(--charcoal);border-radius:3px;background:var(--bone);padding:18px 20px;text-align:center;min-width:120px}
+.lev-node .big{font-family:var(--disp);font-size:46px;line-height:.9;color:var(--charcoal)}
+.lev-node .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-top:6px}
+.lev-node.hot{background:var(--orange);border-color:var(--charcoal);box-shadow:4px 5px 0 var(--charcoal)}
+.lev-node.hot .big,.lev-node.hot .lbl{color:var(--paper)}
+.lev-arrow{font-family:var(--disp);font-size:40px;color:var(--orange)}
+.lev-plat{display:flex;flex-wrap:wrap;gap:8px}
+.lev-plat span{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid var(--charcoal);border-radius:2px;padding:8px 12px;background:var(--paper)}
+
+/* three-angle cards (02) */
+.angles{margin-top:34px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.ang{border:1.5px solid var(--charcoal);border-radius:3px;background:var(--bone);padding:18px;display:flex;flex-direction:column;gap:10px}
+.ang .num{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:.14em;color:var(--orange)}
+.ang .nm{font-family:var(--disp);font-size:22px;text-transform:uppercase;line-height:.95}
+.ang .shape{font-family:var(--mono);font-size:11px;line-height:1.5;color:var(--ink-soft)}
+.ang .shape b{color:var(--charcoal)}
+.ang.hot{background:var(--orange);box-shadow:4px 5px 0 var(--charcoal)}
+.ang.hot .num{color:var(--paper)}
+.ang.hot .nm{color:var(--paper)}
+.ang.hot .shape{color:var(--paper)}
+.ang.hot .shape b{color:var(--paper)}
+
+/* anatomy-of-a-cut phone frame (band) */
+.cut{display:grid;grid-template-columns:300px 1fr;gap:50px;align-items:center;max-width:880px;margin:0 auto;text-align:left}
+.phone{position:relative;width:300px;aspect-ratio:9/16;border:3px solid var(--paper);border-radius:22px;overflow:hidden;background:var(--navy);box-shadow:8px 10px 0 rgba(0,0,0,.35)}
+.phone .screencap{position:absolute;top:0;left:0;right:0;height:56%;background:repeating-linear-gradient(135deg,#2b3a4f 0 9px,#26344a 9px 18px);display:flex;align-items:flex-start;padding:14px}
+.phone .scaplbl{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--orange-soft);font-weight:700}
+.phone .avatar{position:absolute;bottom:0;left:0;right:0;height:44%;background:linear-gradient(to top,#7a3115,var(--orange));display:flex;align-items:flex-end;justify-content:center;padding:12px}
+.phone .avlbl{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--paper);font-weight:700;opacity:.85}
+.phone .hookcard{position:absolute;top:16%;left:50%;transform:translateX(-50%);width:78%;text-align:center;font-family:var(--disp);font-size:24px;line-height:.92;text-transform:uppercase;color:var(--paper);text-shadow:2px 2px 0 var(--charcoal)}
+.phone .capband{position:absolute;top:52%;left:50%;transform:translate(-50%,-50%);width:86%;text-align:center;font-family:var(--disp);font-size:17px;text-transform:uppercase;color:var(--paper);text-shadow:1.5px 1.5px 0 var(--charcoal);line-height:1.05}
+.phone .capband u{text-decoration:none;color:var(--orange-soft)}
+.cut-legend{display:flex;flex-direction:column;gap:18px}
+.cut-leg{display:grid;grid-template-columns:18px 1fr;gap:14px;align-items:start}
+.cut-leg .sw{width:16px;height:16px;border-radius:3px;margin-top:3px;border:1.5px solid var(--paper)}
+.cut-leg .nm{font-family:var(--disp);font-size:18px;text-transform:uppercase;color:var(--paper);line-height:1}
+.cut-leg .ds{font-size:14px;color:var(--orange-soft);line-height:1.45;margin-top:4px}
+
+/* b-roll source legend (06) */
+.sources{margin-top:30px;display:flex;flex-direction:column;gap:10px}
+.src{display:grid;grid-template-columns:120px 1fr;gap:16px;align-items:center;border:1.5px solid var(--charcoal);border-radius:3px;background:var(--bone);padding:13px 16px}
+.src .role{font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+.src .role .tag{display:block;font-size:9px;color:var(--ink-soft);margin-top:3px;letter-spacing:.08em}
+.src .what{font-size:15px;color:var(--ink-soft);line-height:1.4}
+.src .what b{color:var(--charcoal)}
+.src.star{background:var(--orange);border-color:var(--charcoal);box-shadow:3px 4px 0 var(--charcoal)}
+.src.star .role,.src.star .what{color:var(--paper)}
+.src.star .role .tag{color:var(--paper);opacity:.8}
+.src.star .what b{color:var(--paper)}
+
+/* schedule stagger grid (07) */
+.sched{margin-top:30px;border:1.5px solid var(--charcoal);border-radius:3px;overflow:hidden;font-family:var(--mono)}
+.sched-row{display:grid;grid-template-columns:96px 1fr;border-bottom:1px solid var(--line)}
+.sched-row:last-child{border-bottom:none}
+.sched-day{background:var(--charcoal);color:var(--paper);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:14px 12px;display:flex;flex-direction:column;justify-content:center}
+.sched-day b{color:var(--orange-soft);font-size:12px}
+.sched-cut{padding:12px 14px;background:var(--bone);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sched-cut .ang-pill{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--paper);background:var(--orange);padding:5px 10px;border-radius:2px}
+.sched-cut .plats{font-size:11px;color:var(--ink-soft);letter-spacing:.04em}
+.sched-cut .plats b{color:var(--charcoal)}
+
+@media(max-width:860px){
+  .lesson .grid{grid-template-columns:1fr}
+  .piece{grid-template-columns:46px 1fr}.piece .d{grid-column:2}
+  .lev{grid-template-columns:1fr;gap:16px;justify-items:start}
+  .angles{grid-template-columns:1fr}
+  .cut{grid-template-columns:1fr;justify-items:center;text-align:center}
+  .cut-legend{margin-top:20px}
+  .src{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<nav><span>THE SHORTIFY SYSTEM<span class="dot"> ·</span> A CLAUDE CODE CLUB LESSON</span><span>FILM ONCE · POST EVERYWHERE</span></nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="hero-in">
+    <div class="eye">One long-form video · three native shorts · every platform</div>
+    <h1>Clone<br><span class="o">Yourself.</span></h1>
+    <p class="lede">Record <b>one</b> long-form video. A system turns it into <b>three</b> distinct shorts, each with its own hook, writes the captions for every platform, and schedules the whole week. You film once. Your face ships everywhere.</p>
+    <div class="herometa">
+      <span><b>1</b> recording in</span>
+      <span><b>3</b> angles out</span>
+      <span><b>5</b> platforms scheduled</span>
+      <span><b>0</b> edits by hand</span>
+    </div>
+  </div>
+  <div class="scrollcue">roll tape</div>
+</header>
+
+<!-- THESIS + INDEX -->
+<section class="thesis" id="pieces">
+  <div class="wrap">
+    <div class="k reveal">Why this exists</div>
+    <h2 class="reveal">The real bottleneck was never <em>ideas.</em> It was <em>reps.</em></h2>
+    <p class="body reveal">You already say smart things on camera. The problem is one video is one post, and the editing tax means most of it never ships.</p>
+    <p class="body reveal">Shortify breaks that. <b>One long-form recording becomes a week of short-form,</b> because the same fifteen minutes holds three completely different stories depending on where you cut and how you frame it.</p>
+    <p class="body reveal">A clone of you, trained once, delivers each one. That is the leverage: <b>your time goes in once, your presence comes out everywhere.</b></p>
+
+    <div class="lev reveal">
+      <div class="lev-node"><div class="big">1</div><div class="lbl">long-form in</div></div>
+      <div class="lev-arrow">→</div>
+      <div>
+        <div class="lev-plat" style="margin-bottom:14px">
+          <div class="lev-node hot" style="min-width:90px"><div class="big">3</div><div class="lbl">angle cuts</div></div>
+        </div>
+        <div class="lev-plat">
+          <span>YouTube</span><span>Instagram</span><span>TikTok</span><span>Facebook</span><span>LinkedIn</span>
+        </div>
+      </div>
+    </div>
+    <div class="figcap"><span>One recording, fanned out</span><span>time in <em>once</em>, presence out <em>everywhere</em></span></div>
+
+    <div class="pieces">
+      <a class="piece reveal" href="#s1"><span class="n">01</span><span class="t">Mine the moments</span><span class="d">The machine reads the transcript and pulls the few moments worth cutting. Skip the intro, skip the filler, find the gold.</span></a>
+      <a class="piece reveal" href="#s2"><span class="n">02</span><span class="t">One video, three angles</span><span class="d">The same raw material, cut into three psychological shapes: proof, contrarian, transformation. Three posts that never compete with each other.</span></a>
+      <a class="piece reveal" href="#s3"><span class="n">03</span><span class="t">The hook</span><span class="d">The single most important second. Built from proven patterns, never invented fresh, and distinct for every angle.</span></a>
+      <a class="piece reveal" href="#s4"><span class="n">04</span><span class="t">The script</span><span class="d">Result before mechanism. Name the tool, never "AI." A spoken shape tuned to each angle, with the payoff up front.</span></a>
+      <a class="piece reveal" href="#s5"><span class="n">05</span><span class="t">The avatar</span><span class="d">A HeyGen clone of you. Record your look once, and it delivers any script, forever. This is the leverage engine.</span></a>
+      <a class="piece reveal" href="#s6"><span class="n">06</span><span class="t">B-roll and screencap</span><span class="d">The make-or-break. Your real product is the star, shown early. Generated art is the spice. Karaoke captions carry the words.</span></a>
+      <a class="piece reveal" href="#s7"><span class="n">07</span><span class="t">Caption and schedule</span><span class="d">Per-platform captions, the soft CTA that adapts to the video, and an auto-scheduler that staggers the week across every feed.</span></a>
+      <a class="piece reveal" href="#master"><span class="n">∞</span><span class="t">The one command</span><span class="d">Point it at the long-form video. It produces three captioned cuts and queues them. This is what Claude Code was built for.</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- 01 MINE THE MOMENTS -->
+<section class="lesson" id="s1">
+  <div class="wrap"><div class="grid">
+    <div>
+      <div class="k reveal">01 · Mine the moments</div>
+      <h2 class="reveal">Most of the video is <em>not the video.</em></h2>
+      <p class="body reveal">A fifteen-minute recording has maybe four moments that earn a short. The rest is throat-clearing, setup, and tangent.</p>
+      <p class="body reveal">So before anything renders, the system reads the timestamped transcript and finds them: <b>the claim with a number in it, the belief it overturns, the before-and-after.</b></p>
+      <p class="body reveal">It skips the intro on purpose, because the first thing you said is almost never the strongest thing you said.</p>
+      <div class="law reveal">
+        <div>The input is a <b>timestamped transcript</b> plus the screen recording.</div>
+        <div>The intro gets skipped. <b>The hook lives in the middle.</b></div>
+        <div>One pass finds the moments. <b>Everything downstream builds on them.</b></div>
+      </div>
+    </div>
+    <div>
+      <div class="prompt reveal">
+        <div class="bar"><span>Prompt 01 · find the cuts</span><button class="copybtn">Copy</button></div>
+        <pre>Here is the timestamped transcript of a long-form video. [attach transcript]
+
+You are my short-form producer. Read the whole thing and pull the moments that could each carry a standalone short. Ignore the intro and any housekeeping.
+
+For each moment give me:
+- The timestamp range.
+- The single idea it makes.
+- Which shape it fits best: a result with a number, a belief it overturns, or a before-and-after.
+- One line on why it would stop a scroll.
+
+Rank them. I want the few that are actually strong, not a list of everything. Save them to moments.md.</pre>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 02 THREE ANGLES -->
+<section class="lesson" id="s2">
+  <div class="wrap"><div class="grid">
+    <div>
+      <div class="k reveal">02 · One video, three angles</div>
+      <h2 class="reveal">Three shorts that <em>never compete.</em></h2>
+      <p class="body reveal">If you cut the same video three times the same way, you get three posts that cannibalize each other.</p>
+      <p class="body reveal">So each angle takes a different psychological shape. Same recording, three different doors into it.</p>
+
+      <div class="angles reveal">
+        <div class="ang">
+          <div class="num">Angle A</div>
+          <div class="nm">Proof</div>
+          <div class="shape"><b>Result-led.</b> The outcome and the number first, then the proof, then how.</div>
+        </div>
+        <div class="ang hot">
+          <div class="num">Angle B</div>
+          <div class="nm">Contrarian</div>
+          <div class="shape"><b>Belief-flip.</b> The wrong belief first. The result lands after, as the mic drop.</div>
+        </div>
+        <div class="ang">
+          <div class="num">Angle C</div>
+          <div class="nm">Transform</div>
+          <div class="shape"><b>Before / after.</b> The old-world cost, then the new world and the result.</div>
+        </div>
+      </div>
+      <div class="figcap"><span>Three shapes, one source</span><span>different <em>doors</em> into the same room</span></div>
+
+      <div class="law reveal">
+        <div>Same footage, <b>three distinct openings.</b> Never homogenized into one.</div>
+        <div>Proof leads with the win. Contrarian leads with the <b>wrong belief.</b></div>
+        <div>Three angles means <b>three days of content from one sit-down.</b></div>
+      </div>
+    </div>
+    <div>
+      <div class="prompt reveal">
+        <div class="bar"><span>Prompt 02 · split into angles</span><button class="copybtn">Copy</button></div>
+        <pre>Read moments.md. We are cutting this one video into THREE distinct shorts that must not feel like the same post three times.
+
+Assign each to a different shape and tell me which moment carries it:
+
+- PROOF: result-led. Open on the outcome and the number, then the proof, then the mechanism. Never bury the payoff.
+- CONTRARIAN: belief-flip. Open on the wrong belief everyone holds, THEN drop the result as the proof that breaks it. The result comes after the belief, never before.
+- TRANSFORMATION: before/after. Open on what the old way cost, then the new world and the result.
+
+For each, give me the one-line spine of the short and the exact moment from moments.md it is built on. Keep the three openings as different from each other as possible. Save to angles.md.</pre>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 03 THE HOOK -->
+<section class="lesson" id="s3">
+  <div class="wrap"><div class="grid">
+    <div>
+      <div class="k reveal">03 · The hook</div>
+      <h2 class="reveal">The whole video lives or dies in <em>one second.</em></h2>
+      <p class="body reveal">Short-form is won or lost in the first second, so the hook is the one thing you never improvise.</p>
+      <p class="body reveal">Every hook is instantiated from a vault of patterns that have already proven they stop a scroll. You keep the proven shape and <b>swap only the variables:</b> the tool, the number, the outcome.</p>
+      <p class="body reveal">On screen it shows as a title of three or four words, never a sentence that spans the frame. Spoken, it promises a payoff without giving it away.</p>
+      <div class="law reveal">
+        <div>Hooks come from <b>a proven vault,</b> never invented from scratch.</div>
+        <div>Swap the variables, <b>keep the shape</b> that already works.</div>
+        <div>On-screen title: <b>three to four words,</b> broken so it never spans the frame.</div>
+        <div>Say "Claude Code," <b>never "AI."</b> Name the thing.</div>
+      </div>
+    </div>
+    <div>
+      <div class="prompt reveal">
+        <div class="bar"><span>Prompt 03 · instantiate the hook</span><button class="copybtn">Copy</button></div>
+        <pre>For each angle in angles.md, write the hook.
+
+Do NOT invent a new hook shape. Start from a hook pattern that has already proven it works, and swap only the variables: the tool, the number, the outcome. If you are reaching for a shape you cannot point to as proven, pick a different one.
+
+For each angle give me:
+- The spoken hook (the first line out of my mouth). It must promise a specific payoff without revealing it. Name the tool ("Claude Code" or the feature), never "AI."
+- The on-screen hook title: three to four words. If it runs longer, break it with a line break so it never spans the full frame.
+
+The three hooks must be obviously different from each other. The contrarian one can be a pattern interrupt. Save them into angles.md next to each angle.</pre>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 04 THE SCRIPT -->
+<section class="lesson" id="s4">
+  <div class="wrap"><div class="grid">
+    <div>
+      <div class="k reveal">04 · The script</div>
+      <h2 class="reveal">Say the payoff <em>first.</em></h2>
+      <p class="body reveal">A short is not a slow reveal. The result goes at the front, and the mechanism explains it after.</p>
+      <p class="body reveal">The script always answers <b>why,</b> not just what. Not "I built a dashboard," but "now I never lose a lead again." The pain it removes is the point.</p>
+      <p class="body reveal">And it names things. The actual model, the actual feature, never a vague "a new AI tool." Specificity is what makes it sound true.</p>
+      <p class="body reveal">There is no spoken call to action. The CTA lives on the end card, so the script stays pure value the whole way through.</p>
+      <div class="law reveal">
+        <div>Result before mechanism. <b>Never bury the payoff.</b></div>
+        <div>Answer why: <b>the pain it removes,</b> not just the feature.</div>
+        <div>Name the model and the feature. <b>Never "AI."</b></div>
+        <div>No spoken CTA. <b>The end card carries it.</b></div>
+      </div>
+    </div>
+    <div>
+      <div class="prompt reveal">
+        <div class="bar"><span>Prompt 04 · write the three scripts</span><button class="copybtn">Copy</button></div>
+        <pre>Write the spoken script for each angle in angles.md. Keep each under 30 seconds when read aloud.
+
+Rules that apply to all three:
+- Open with the hook already written for that angle.
+- Result before mechanism. Lead with the outcome, explain how only after.
+- Answer WHY: name the pain it removes ("now I do not have to..."), not just what the thing does.
+- Name the model and the feature specifically (e.g. Opus 4.8). Never say "AI" or "AIs." Say "Claude Code," "Claude," or "agents."
+- Write in thought-lines with natural pauses, the way a person actually talks.
+- No spoken call to action. The end card handles that.
+
+Keep the three shapes distinct: proof leads with the win, contrarian leads with the wrong belief, transformation leads with the old-world cost. Save each to its own script file and show me before anything renders.</pre>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 05 THE AVATAR -->
+<section class="lesson" id="s5">
+  <div class="wrap"><div class="grid">
+    <div>
+      <div class="k reveal">05 · The avatar</div>
+      <h2 class="reveal">Record your face <em>once.</em></h2>
+      <p class="body reveal">This is the part that turns time into leverage.</p>
+      <p class="body reveal">You train a HeyGen avatar on yourself one time. After that, <b>it delivers any script you hand it, in your face and your voice, without you sitting back down.</b></p>
+      <p class="body reveal">Three scripts used to mean three takes, three setups, three chances to fumble a line. Now it means three text files. The clone reads all three.</p>
+      <p class="body reveal">It sits at the bottom of the frame, present from the very first frame, no fade-in. The pauses get trimmed so it always feels tight.</p>
+      <div class="law reveal">
+        <div>Train the avatar once. <b>Reuse it on every script forever.</b></div>
+        <div>Three scripts, <b>zero re-shoots.</b> The clone does the talking.</div>
+        <div>Avatar sits <b>bottom of frame,</b> present on frame one.</div>
+        <div>Pauses trimmed in a single pass. <b>It never drags.</b></div>
+      </div>
+    </div>
+    <div>
+      <div class="prompt reveal">
+        <div class="bar"><span>Prompt 05 · the clone, conceptually</span><button class="copybtn">Copy</button></div>
+        <pre>The leverage move: build a reusable avatar once, then drive it with text.
+
+The one-time setup (done by hand, once):
+- Record a short, well-lit, straight-to-camera clip of yourself as the HeyGen avatar source. Neutral background, natural delivery.
+- This becomes your avatar ID. You never re-record it.
+
+From then on, for every short:
+- Generate the avatar speaking the script for each angle. Same face, same voice, three different scripts.
+- Place the avatar at the bottom of the vertical frame.
+- Trim silent pauses in one pass so it is present on the first frame, no leading fade.
+
+The point: your presence is now an asset you spend, not a shoot you repeat. One recording, unlimited deliveries.</pre>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- BAND · anatomy of a cut -->
+<section class="band">
+  <div class="k reveal">The anatomy of one cut</div>
+  <div class="cut reveal">
+    <div class="phone">
+      <div class="screencap"><span class="scaplbl">screencap · the real product</span></div>
+      <div class="hookcard">3 Edits<br>In One Hour</div>
+      <div class="capband">it caught the bug <u>before</u> i did</div>
+      <div class="avatar"><span class="avlbl">your avatar · the clone</span></div>
+    </div>
+    <div class="cut-legend">
+      <div class="cut-leg"><span class="sw" style="background:#26344a"></span><div><div class="nm">Screencap, top</div><div class="ds">Your real product fills the top. It is the star, shown early, cut through as the script names each part.</div></div></div>
+      <div class="cut-leg"><span class="sw" style="background:var(--orange)"></span><div><div class="nm">Avatar, bottom</div><div class="ds">The clone of you delivers the line. Present on frame one, no fade.</div></div></div>
+      <div class="cut-leg"><span class="sw" style="background:var(--paper)"></span><div><div class="nm">Karaoke captions</div><div class="ds">Every word on screen, the live one lit. Whisper mishears "Claude," so it auto-corrects.</div></div></div>
+      <div class="cut-leg"><span class="sw" style="background:var(--orange-soft)"></span><div><div class="nm">Hook title</div><div class="ds">Three or four words, slammed near the top, gone after the first beat.</div></div></div>
+    </div>
+  </div>
+  <p class="body reveal" style="margin:7vh auto 0;color:var(--orange-soft);max-width:30ch">Five steps in, and the look is already locked. <em>That is the system.</em></p>
+</section>
+
+<!-- 06 B-ROLL + SCREENCAP -->
+<section class="lesson" id="s6">
+  <div class="wrap"><div class="grid">
+    <div>
+      <div class="k reveal">06 · B-roll and screencap</div>
+      <h2 class="reveal">Your product is <em>the star.</em></h2>
+      <p class="body reveal">This is the make-or-break step. Most AI shorts fail here, drowning the screen in generated art that means nothing.</p>
+      <p class="body reveal">The rule is the opposite. <b>The real thing you built, the actual screen recording, carries most of the beats,</b> shown early and cut through panel by panel as the script names them.</p>
+      <p class="body reveal">Generated art is the spice, not the meal: a conceptual opener, and a few canonical scenes built once and reused across all three cuts.</p>
+      <p class="body reveal">A list line ("watch every line, approve every step, catch every mistake") becomes rapid word cards, one per item, never a full sentence on screen.</p>
+      <div class="sources reveal">
+        <div class="src star">
+          <div class="role">Screencap<span class="tag">the star</span></div>
+          <div class="what"><b>Your real product.</b> Most beats. Shown early, cut through as the script names each part.</div>
+        </div>
+        <div class="src">
+          <div class="role">Gen b-roll<span class="tag">the spice</span></div>
+          <div class="what">Riso-style conceptual art. Opener plus a few canonical scenes, built once, reused across all three.</div>
+        </div>
+        <div class="src">
+          <div class="role">Word cards<span class="tag">for lists</span></div>
+          <div class="what">A list line becomes rapid-fire cards, four words max each. Never a sentence.</div>
+        </div>
+        <div class="src">
+          <div class="role">Library clip<span class="tag">cold open</span></div>
+          <div class="what">A relevance-matched brand clip opens cold, before the product appears.</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="prompt reveal">
+        <div class="bar"><span>Prompt 06 · the beat-by-beat plan</span><button class="copybtn">Copy</button></div>
+        <pre>Build the visual plan for each short, beat by beat against the script.
+
+The iron rule: the real product, the screen recording, is the STAR. Show it early, right after the cold open, and cut through its panels as the script names them. It should carry most of the beats.
+
+Generated art is the spice, not the meal:
+- One conceptual opener.
+- A small set of canonical scenes (build them once, reuse the exact same ones across all three angles).
+
+Other sources:
+- A list line gets one rapid word card per item, four words max. A full sentence is never a word card.
+- The cold open is a short, relevance-matched library clip, before the product appears.
+- End on a wide shot of the full product.
+
+Motion variety: no camera move more than twice in a row. Then verify the actual frames, do not trust the plan blindly. A plain editor or notes screen is never the visual when the line is not about that.</pre>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 07 CAPTION + SCHEDULE -->
+<section class="lesson" id="s7">
+  <div class="wrap"><div class="grid">
+    <div>
+      <div class="k reveal">07 · Caption and schedule</div>
+      <h2 class="reveal">One video becomes <em>a scheduled week.</em></h2>
+      <p class="body reveal">Three finished cuts are not three posts until the captions and the calendar exist. The system writes both.</p>
+      <p class="body reveal">Each platform gets its own caption and first line. The soft CTA adapts to what the video actually is: a tutorial points people to learn, a showcase points them to the thing itself.</p>
+      <p class="body reveal">Then it reads your live posting queue and drops the three cuts into the next open days, <b>staggered at least eight days apart,</b> rotating times so they never stack. One angle also runs as a personal LinkedIn story with no CTA.</p>
+      <div class="sched reveal">
+        <div class="sched-row">
+          <div class="sched-day">Day 1<br><b>8:00 AM</b></div>
+          <div class="sched-cut"><span class="ang-pill">Proof</span><span class="plats">YouTube · <b>Instagram</b> · TikTok · Facebook</span></div>
+        </div>
+        <div class="sched-row">
+          <div class="sched-day">Day 9<br><b>1:00 PM</b></div>
+          <div class="sched-cut"><span class="ang-pill">Contrarian</span><span class="plats">YouTube · Instagram · TikTok · Facebook · <b>LinkedIn story</b></span></div>
+        </div>
+        <div class="sched-row">
+          <div class="sched-day">Day 17<br><b>5:00 PM</b></div>
+          <div class="sched-cut"><span class="ang-pill">Transform</span><span class="plats">YouTube · Instagram · TikTok · Facebook</span></div>
+        </div>
+      </div>
+      <div class="figcap"><span>Staggered, not stacked</span><span>eight days apart, <em>rotating times</em></span></div>
+    </div>
+    <div>
+      <div class="prompt reveal">
+        <div class="bar"><span>Prompt 07 · caption and queue</span><button class="copybtn">Copy</button></div>
+        <pre>Two jobs: write the captions, then schedule.
+
+CAPTIONS, per angle and per platform:
+- A title and first line that are distinct for each angle.
+- Match the soft CTA to what the video IS. A tutorial points people to learn to build it. A showcase points them to the thing itself. Pull this from the video, not a generic guess.
+- Keep platform limits in mind (for example, a hard cap of five hashtags on Instagram).
+
+SCHEDULE:
+- Read the live posting queue first.
+- Drop the three cuts into the next OPEN days, at least eight days apart, rotating the times (morning, midday, late afternoon) so they never stack.
+- Each cut goes to the four video feeds. One chosen angle also posts as a personal LinkedIn story with no CTA.
+- Preview the full slot plan before anything is queued.</pre>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- MASTER -->
+<section class="master" id="master">
+  <div class="wrap">
+    <div class="k reveal">The finale · what Claude Code was built for</div>
+    <h2 class="reveal">Or just hand it <em>the video.</em></h2>
+    <p class="body reveal">The seven steps teach you the craft.</p>
+    <p class="body reveal">But Claude is an agent. It can run the whole pipeline itself, from raw recording to a scheduled week, and only stop where your taste actually matters.</p>
+    <p class="body reveal">You approve the scripts. It does everything else.</p>
+    <div class="prompt reveal">
+      <div class="bar"><span>The one command · raw video to scheduled week</span><button class="copybtn">Copy</button></div>
+      <pre>Turn this long-form video into a week of short-form. Here is the transcript and the screen recording. [attach both]
+
+Mine the strongest moments and skip the intro. Cut three distinct shorts from them: a proof angle, a contrarian angle, and a transformation angle, each with its own hook pulled from a proven pattern.
+
+Write the three scripts. Result before mechanism, name the tool not "AI," no spoken CTA. Show me the scripts and the visual plans BEFORE you render. That is my one gate.
+
+Then deliver each with my avatar at the bottom, my real product screencap as the star up top, karaoke captions, and generated art only as spice. Write per-platform captions with a CTA that matches what the video is.
+
+Finally, read my live queue and schedule all three across YouTube, Instagram, TikTok, and Facebook, staggered at least eight days apart, with one angle as a LinkedIn story.
+
+Stop only for the script approval. Everything else is your call. Keep going until three captioned cuts are sitting in the queue.</pre>
+    </div>
+  </div>
+</section>
+
+<!-- RESERVE -->
+<section class="reserve">
+  <div class="k reveal">Steal the whole system</div>
+  <h2 class="reveal">Film once. <em>Post all week.</em></h2>
+  <p class="body reveal" style="margin:0 auto">This is how one person keeps five feeds full without living inside an editor. You record when you have something to say. The clone handles the reps.</p>
+  <p class="body reveal" style="margin:18px auto 0">Learn the seven steps to understand the craft. Run the one command when you just want the week shipped.</p>
+  <a class="cta reveal" href="https://claudecodeclub.ai">Get the system · claudecodeclub.ai</a>
+</section>
+
+<footer><span>Created by Claude Code Club · <em>claudecodeclub.ai</em></span></footer>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+gsap.from('.hero-in > *',{y:50,opacity:0,duration:1.1,ease:'power3.out',stagger:0.12,delay:0.15});
+document.querySelectorAll('.reveal').forEach(el=>{
+  gsap.to(el,{opacity:1,y:0,duration:.9,ease:'power3.out',scrollTrigger:{trigger:el,start:'top 88%'}});
+});
+document.querySelectorAll('.copybtn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const txt = btn.closest('.prompt').querySelector('pre').innerText;
+    navigator.clipboard.writeText(txt).then(()=>{btn.textContent='Copied';setTimeout(()=>btn.textContent='Copy',1600)});
+  });
+});
+</script>
+</body>
+</html>

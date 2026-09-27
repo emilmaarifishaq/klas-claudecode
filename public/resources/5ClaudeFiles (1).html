@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>5 FILES EVERY CLAUDE CODE USER NEEDS // 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink-orange:        #E96A3C;
+      --ink-paper:         #E8DCC4;
+      --ink-charcoal:      #1C1B17;
+      --ink-bone:          #F2E9D6;
+      --ink-amber:         #F0B24A;
+      --ink-orange-soft:   #F4A584;
+      --ink-paper-shadow:  #C9BDA0;
+
+      --font-display: 'Anton', 'Impact', sans-serif;
+      --font-meta:    'JetBrains Mono', monospace;
+      --font-body:    'Inter', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; background: var(--ink-paper); }
+
+    body {
+      background: var(--ink-paper);
+      color: var(--ink-charcoal);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      opacity: 0.12;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      z-index: 9998;
+    }
+
+    #progress {
+      position: fixed;
+      top: 0; left: 0;
+      width: 3px; height: 0%;
+      background: var(--ink-orange);
+      z-index: 9999;
+      transition: height 0.1s;
+    }
+
+    .col { max-width: 860px; width: 100%; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 2; }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--ink-orange);
+      color: var(--ink-paper);
+      position: relative;
+      overflow: hidden;
+      border-bottom: 2px solid var(--ink-charcoal);
+      padding: 0;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      opacity: 0.12;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 1fr;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-main {
+      padding: 80px 60px 80px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--font-meta);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-paper);
+      opacity: 0.7;
+      margin-bottom: 40px;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(80px, 11vw, 148px);
+      line-height: 0.92;
+      text-transform: uppercase;
+      color: var(--ink-paper);
+      letter-spacing: -0.01em;
+      flex: 1;
+      align-self: center;
+    }
+
+    .hero-title .accent { color: var(--ink-charcoal); }
+
+    .hero-bottom {
+      margin-top: 60px;
+    }
+
+    .hero-sub {
+      font-family: var(--font-meta);
+      font-size: 13px;
+      color: var(--ink-paper);
+      opacity: 0.85;
+      letter-spacing: 0.04em;
+      line-height: 1.6;
+      margin-bottom: 40px;
+      text-transform: uppercase;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 0;
+      border-top: 1px solid rgba(232,220,196,0.3);
+      padding-top: 24px;
+    }
+
+    .hero-stat {
+      flex: 1;
+      padding-right: 24px;
+    }
+
+    .hero-stat-num {
+      font-family: var(--font-display);
+      font-size: 72px;
+      color: var(--ink-paper);
+      line-height: 1;
+      display: block;
+    }
+
+    .hero-stat-label {
+      font-family: var(--font-meta);
+      font-size: 13px;
+      color: var(--ink-paper);
+      opacity: 0.65;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      display: block;
+      margin-top: 6px;
+    }
+
+    .hero-sidebar {
+      background: var(--ink-charcoal);
+      border-left: 2px solid var(--ink-charcoal);
+      padding: 60px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .sidebar-label {
+      font-family: var(--font-meta);
+      font-size: 9px;
+      color: var(--ink-orange);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 24px;
+    }
+
+    .sidebar-file {
+      padding: 20px 0;
+      border-bottom: 1px solid rgba(232,220,196,0.12);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sidebar-file:last-child { border-bottom: none; }
+
+    .sidebar-file-num {
+      font-family: var(--font-meta);
+      font-size: 10px;
+      color: var(--ink-orange);
+      opacity: 0.8;
+      width: 20px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-file-name {
+      font-family: var(--font-meta);
+      font-size: 13px;
+      color: var(--ink-paper);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .sidebar-file-role {
+      font-family: var(--font-meta);
+      font-size: 10px;
+      color: var(--ink-paper);
+      opacity: 0.5;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 3px;
+    }
+
+    /* ── INTRO BAND ── */
+    .intro-band {
+      background: var(--ink-charcoal);
+      border-bottom: 2px solid var(--ink-charcoal);
+      padding: 56px 0;
+    }
+
+    .intro-band .col {
+      display: flex;
+      align-items: center;
+      gap: 48px;
+    }
+
+    .intro-band-text {
+      font-family: var(--font-meta);
+      font-size: 16px;
+      color: var(--ink-paper);
+      opacity: 0.7;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      line-height: 1.9;
+      flex: 1;
+    }
+
+    .intro-band-statement {
+      font-family: var(--font-display);
+      font-size: 56px;
+      color: var(--ink-paper);
+      text-transform: uppercase;
+      line-height: 1.0;
+      flex: 1.5;
+    }
+
+    .intro-band-statement .o { color: var(--ink-orange); }
+
+    /* ── SECTION BASE ── */
+    section {
+      border-bottom: 2px solid var(--ink-charcoal);
+      padding: 80px 0;
+    }
+
+    section.section--dark {
+      background: var(--ink-charcoal);
+      color: var(--ink-paper);
+    }
+
+    section.section--bone {
+      background: var(--ink-bone);
+    }
+
+    section.section--orange {
+      background: var(--ink-orange);
+      color: var(--ink-paper);
+    }
+
+    /* ── CHAPTER LABEL ── */
+    .chapter {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .chapter-num {
+      font-family: var(--font-meta);
+      font-size: 11px;
+      color: var(--ink-orange);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .section--dark .chapter-num { color: var(--ink-orange); }
+
+    .chapter-rule {
+      flex: 1;
+      height: 1px;
+      background: var(--ink-charcoal);
+      opacity: 0.2;
+    }
+
+    .section--dark .chapter-rule { background: var(--ink-paper); opacity: 0.15; }
+    .section--orange .chapter-rule { background: var(--ink-paper); opacity: 0.35; }
+
+    .chapter-title {
+      font-family: var(--font-meta);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      opacity: 0.5;
+    }
+
+    /* ── FILE SECTION LAYOUT ── */
+    .file-section {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .file-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+      margin-bottom: 40px;
+    }
+
+    .file-content {}
+
+    .file-badge {
+      display: inline-block;
+      font-family: var(--font-meta);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 5px 12px;
+      background: var(--ink-orange);
+      color: var(--ink-paper);
+      margin-bottom: 20px;
+    }
+
+    .section--dark .file-badge {
+      background: var(--ink-paper);
+      color: var(--ink-charcoal);
+    }
+
+    .section--orange .file-badge {
+      background: var(--ink-charcoal);
+      color: var(--ink-paper);
+    }
+
+    .file-filename {
+      font-family: var(--font-display);
+      font-size: clamp(52px, 7vw, 84px);
+      text-transform: uppercase;
+      line-height: 0.9;
+      margin-bottom: 8px;
+    }
+
+    .file-tagline {
+      font-family: var(--font-meta);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.55;
+      margin-bottom: 32px;
+    }
+
+    .file-description {
+      font-family: var(--font-body);
+      font-size: 17px;
+      line-height: 1.65;
+      margin-bottom: 32px;
+      opacity: 0.9;
+    }
+
+    .file-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .file-bullets li {
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.55;
+      padding: 14px 0;
+      border-top: 1px solid var(--ink-charcoal);
+      display: flex;
+      gap: 12px;
+      opacity: 0.88;
+      transition: all 0.2s;
+      cursor: default;
+    }
+
+    .file-bullets li:last-child {
+      border-bottom: 1px solid var(--ink-charcoal);
+    }
+
+    .section--dark .file-bullets li {
+      border-top-color: rgba(232,220,196,0.12);
+      color: var(--ink-paper);
+    }
+
+    .section--dark .file-bullets li:last-child {
+      border-bottom-color: rgba(232,220,196,0.12);
+    }
+
+    .section--orange .file-bullets li {
+      border-top-color: rgba(28,27,23,0.2);
+      color: var(--ink-paper);
+    }
+
+    .section--orange .file-bullets li:last-child {
+      border-bottom-color: rgba(28,27,23,0.2);
+    }
+
+    .file-bullets li:hover {
+      opacity: 1;
+      padding-left: 6px;
+    }
+
+    .bullet-prefix {
+      font-family: var(--font-meta);
+      font-size: 12px;
+      color: var(--ink-orange);
+      flex-shrink: 0;
+      margin-top: 2px;
+      font-weight: 700;
+    }
+
+    .section--dark .bullet-prefix { color: var(--ink-orange); }
+    .section--orange .bullet-prefix { color: var(--ink-charcoal); opacity: 0.7; }
+
+    /* ── FILE IMAGE ── */
+    .file-image {
+      width: 100%;
+    }
+
+    .file-image img {
+      width: 100%;
+      display: block;
+      border: 2px solid var(--ink-charcoal);
+    }
+
+    .section--dark .file-image img {
+      border-color: rgba(232,220,196,0.2);
+    }
+
+    .file-image-caption {
+      font-family: var(--font-meta);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      opacity: 0.45;
+      margin-top: 10px;
+    }
+
+    /* ── INLINE PROMPT ── */
+    .inline-prompt {
+      margin-top: 40px;
+      border-top: 1px solid rgba(28,27,23,0.15);
+      padding-top: 32px;
+    }
+
+    .section--dark .inline-prompt { border-top-color: rgba(232,220,196,0.12); }
+    .section--orange .inline-prompt { border-top-color: rgba(28,27,23,0.2); }
+
+    .inline-prompt-label {
+      font-family: var(--font-meta);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--ink-orange);
+      margin-bottom: 12px;
+    }
+
+    .section--orange .inline-prompt-label { color: var(--ink-charcoal); opacity: 0.6; }
+
+    .prompt-box {
+      background: var(--ink-charcoal);
+      color: var(--ink-paper);
+      font-family: var(--font-meta);
+      font-size: 13px;
+      line-height: 1.7;
+      padding: 24px 28px;
+      border: none;
+      width: 100%;
+      resize: none;
+      outline: none;
+      display: block;
+      margin-bottom: 14px;
+    }
+
+    .prompt-box::selection {
+      background: var(--ink-orange);
+      color: var(--ink-charcoal);
+    }
+
+    .copy-btn {
+      background: var(--ink-orange);
+      color: var(--ink-charcoal);
+      font-family: var(--font-meta);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: none;
+      padding: 13px 28px;
+      cursor: pointer;
+      transition: background 0.1s, color 0.1s;
+    }
+
+    .copy-btn:hover { background: var(--ink-charcoal); color: var(--ink-paper); }
+    .copy-btn.copied { background: var(--ink-charcoal); color: var(--ink-paper); }
+
+    /* ── SYSTEM OVERVIEW ── */
+    .system-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      border: 2px solid var(--ink-charcoal);
+      margin-top: 48px;
+    }
+
+    .system-cell {
+      padding: 28px 20px;
+      border-right: 2px solid var(--ink-charcoal);
+      transition: background 0.2s;
+    }
+
+    .system-cell:last-child { border-right: none; }
+
+    .system-cell:hover { background: var(--ink-orange); }
+    .system-cell:hover .system-cell-name { color: var(--ink-paper); }
+    .system-cell:hover .system-cell-role { color: var(--ink-paper); opacity: 0.75; }
+    .system-cell:hover .system-cell-num { color: var(--ink-paper); opacity: 0.6; }
+
+    .system-cell-num {
+      font-family: var(--font-meta);
+      font-size: 10px;
+      color: var(--ink-orange);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .system-cell-name {
+      font-family: var(--font-display);
+      font-size: 22px;
+      text-transform: uppercase;
+      color: var(--ink-charcoal);
+      display: block;
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+
+    .system-cell-role {
+      font-family: var(--font-meta);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ink-charcoal);
+      opacity: 0.5;
+      display: block;
+      line-height: 1.5;
+    }
+
+    /* ── CLOSING ── */
+    .closing {
+      background: var(--ink-charcoal);
+      padding: 120px 0;
+      text-align: center;
+      border-bottom: none;
+    }
+
+    .closing-label {
+      font-family: var(--font-meta);
+      font-size: 11px;
+      color: var(--ink-orange);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-bottom: 32px;
+    }
+
+    .closing-line {
+      font-family: var(--font-body);
+      font-size: 22px;
+      color: var(--ink-paper);
+      opacity: 0.7;
+      line-height: 1.5;
+      max-width: 560px;
+      margin: 0 auto 12px;
+    }
+
+    .closing-statement {
+      font-family: var(--font-display);
+      font-size: clamp(56px, 9vw, 112px);
+      color: var(--ink-orange);
+      text-transform: uppercase;
+      line-height: 0.9;
+      margin-top: 40px;
+    }
+
+    .closing-sub {
+      font-family: var(--font-meta);
+      font-size: 12px;
+      color: var(--ink-paper);
+      opacity: 0.4;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      margin-top: 40px;
+    }
+
+    /* ── TEMPLATE CTA BAND ── */
+    .template-band {
+      background: var(--ink-bone);
+      border-top: 2px solid var(--ink-charcoal);
+      border-bottom: 2px solid var(--ink-charcoal);
+      padding: 56px 0;
+    }
+
+    .template-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      gap: 0;
+      border: 2px solid var(--ink-charcoal);
+      margin-top: 40px;
+    }
+
+    .template-cell {
+      padding: 24px 20px;
+      border-right: 2px solid var(--ink-charcoal);
+    }
+
+    .template-cell:last-child { border-right: none; }
+
+    .template-cell-name {
+      font-family: var(--font-meta);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink-orange);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .template-cell-desc {
+      font-family: var(--font-meta);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--ink-charcoal);
+      opacity: 0.55;
+      line-height: 1.5;
+    }
+
+    .band-heading {
+      font-family: var(--font-display);
+      font-size: 40px;
+      text-transform: uppercase;
+      color: var(--ink-charcoal);
+      margin-bottom: 4px;
+    }
+
+    .band-sub {
+      font-family: var(--font-meta);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ink-charcoal);
+      opacity: 0.5;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-main { padding: 60px 2rem; }
+      .file-top { grid-template-columns: 1fr; gap: 24px; }
+      .system-grid { grid-template-columns: 1fr 1fr; }
+      .template-grid { grid-template-columns: 1fr 1fr; }
+      .intro-band .col { flex-direction: column; gap: 24px; }
+      .prompt-card { padding: 28px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<!-- ── HERO ── -->
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-main">
+      <div class="hero-eyebrow">Claude Code // Context Architecture // 2026</div>
+      <div class="hero-title">
+        5 FILES.<br>ONE<br><span class="accent">BRAIN.</span>
+      </div>
+      <div class="hero-bottom">
+        <div class="hero-sub">Set these up once.<br>Claude works like you — forever.</div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="hero-stat-num">5</span>
+            <span class="hero-stat-label">Core files</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-num">30</span>
+            <span class="hero-stat-label">Minutes to set up</span>
+          </div>
+          <div class="hero-stat">
+            <span class="hero-stat-num">∞</span>
+            <span class="hero-stat-label">Leverage</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── INTRO BAND ── -->
+<div class="intro-band">
+  <div class="col">
+    <div class="intro-band-text">
+      Most people who use Claude Code<br>
+      give it zero context about who they are.<br>
+      Then wonder why it sounds generic.
+    </div>
+    <div class="intro-band-statement">
+      These 5 files fix<br>
+      <span class="o">that.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── SYSTEM OVERVIEW ── -->
+<section class="section--bone">
+  <div class="col">
+    <div class="chapter">
+      <span class="chapter-num">// Overview</span>
+      <div class="chapter-rule"></div>
+      <span class="chapter-title">How the system works</span>
+    </div>
+
+    <div style="max-width: 620px;">
+      <p style="font-family: var(--font-body); font-size: 18px; line-height: 1.7; color: var(--ink-charcoal); margin-bottom: 20px;">
+        One file loads every single session. It sets the rules and tells Claude where to find the rest. The other four only get pulled in when they're actually needed — saving tokens and keeping sessions fast.
+      </p>
+      <p style="font-family: var(--font-body); font-size: 18px; line-height: 1.7; color: var(--ink-charcoal);">
+        Together, they give Claude a complete picture of you — without loading everything at once.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── FILE 01: CLAUDE.MD ── -->
+<section>
+  <div class="col">
+    <div class="chapter">
+      <span class="chapter-num">01 / CLAUDE.md</span>
+      <div class="chapter-rule"></div>
+      <span class="chapter-title">The brain</span>
+    </div>
+    <div class="file-section">
+      <div class="file-image">
+        <img src="02_claude-md.png" alt="CLAUDE.md — the command center diagram" loading="lazy">
+        <div class="file-image-caption">// The master instruction file</div>
+      </div>
+      <div class="file-top">
+        <div class="file-content">
+          <span class="file-badge">The Master File</span>
+          <div class="file-filename">CLAUDE<br>.md</div>
+          <div class="file-tagline">The operating system for every session</div>
+          <p class="file-description">
+            This is the first file Claude reads. It sets the rules for how Claude behaves — and tells it exactly where to find everything else. Think of it as the command center, not the encyclopedia.
+          </p>
+        </div>
+        <ul class="file-bullets">
+          <li><span class="bullet-prefix">//</span> Keep it short. It doesn't hold your whole life story — it points to where your story lives.</li>
+          <li><span class="bullet-prefix">//</span> Write your operating rules here. How you like outputs formatted. What to always do. What to never do.</li>
+          <li><span class="bullet-prefix">//</span> Include explicit "when to read" rules for each file — not just a list of what they contain. "Read voice.md before writing any copy" is an instruction. A table is a reference. Claude follows instructions.</li>
+          <li><span class="bullet-prefix">//</span> Claude re-reads this every session. Every rule you write here is applied automatically — no reminders required.</li>
+        </ul>
+      </div>
+      <div class="inline-prompt">
+        <div class="inline-prompt-label">// Prompt — fill in the placeholders, then paste into Claude Code</div>
+        <textarea class="prompt-box" id="p1" rows="28" readonly>Create my CLAUDE.md file using the rules below. Just output the file — no explanation.
+
+---
+
+# [YOUR NAME] — Claude Operating System
+
+## Who I Am
+I am [YOUR NAME]. I [ONE SENTENCE: what you do and who you do it for].
+
+## Operating Rules
+- Give me a direct recommendation, not a list of options
+- Keep responses tight — I'll ask for more if I need it
+- Don't add features or sections I didn't ask for
+- When something is ambiguous, make a reasonable assumption and flag it
+- Verify before calling anything done
+- [ADD YOUR OWN RULE]
+
+## Never
+- [WORD OR BEHAVIOR YOU HATE — e.g. "never use em dashes"]
+- [ANOTHER ONE]
+
+## When to Read Each File
+
+**Read soul.md when:**
+- Writing anything personal, biographical, or that requires my perspective
+- Telling my story, referencing my background, or making a values-based judgment call
+
+**Read voice.md when:**
+- Writing any copy, caption, post, script, email, or DM in my name
+- Unsure whether a word, phrase, or tone sounds like me
+
+**Read design.md when:**
+- Generating any visual output — carousels, graphics, slides, infographics, UI
+- Choosing colors, fonts, or layout for anything
+
+**Read audience.md when:**
+- Writing content for my audience, not just about a topic
+- Crafting CTAs, pitch copy, or anything meant to convert
+- Unsure what language or framing will land with my people</textarea>
+        <button class="copy-btn" onclick="copyPrompt('p1', this)">Copy Prompt</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FILE 02: SOUL.MD ── -->
+<section class="section--dark">
+  <div class="col">
+    <div class="chapter">
+      <span class="chapter-num">02 / soul.md</span>
+      <div class="chapter-rule"></div>
+      <span class="chapter-title">Who you are</span>
+    </div>
+    <div class="file-section">
+      <div class="file-image">
+        <img src="03_soul-md.png" alt="soul.md — who you are" loading="lazy">
+        <div class="file-image-caption" style="color: var(--ink-paper); opacity: 0.4;">// Your story, your beliefs, your core</div>
+      </div>
+      <div class="file-top">
+        <div class="file-content">
+          <span class="file-badge">Your Origin</span>
+          <div class="file-filename">soul<br>.md</div>
+          <div class="file-tagline" style="color: var(--ink-paper);">The human behind the work</div>
+          <p class="file-description" style="color: var(--ink-paper);">
+            This is not your resume. This is you. Your origin story, your beliefs, the moments that changed your direction. Claude needs to know the human before it can sound like one.
+          </p>
+        </div>
+        <ul class="file-bullets">
+          <li><span class="bullet-prefix">//</span> Write your origin story. Where you started, what you walked away from, what changed. Specific moments land harder than summary statements.</li>
+          <li><span class="bullet-prefix">//</span> Write your actual beliefs — not the safe ones. The opinions you hold about your industry, your craft. These make content feel like you.</li>
+          <li><span class="bullet-prefix">//</span> soul.md is NOT where your offer or audience lives. This file is about the operator. Keep it personal.</li>
+          <li><span class="bullet-prefix">//</span> Claude draws on this when it writes in your voice, tells your story, or needs to make a judgment call that reflects your values.</li>
+        </ul>
+      </div>
+      <div class="inline-prompt">
+        <div class="inline-prompt-label">// Prompt — Claude interviews you to generate this file</div>
+        <textarea class="prompt-box" id="p2" rows="18" readonly>I want to build my soul.md file — the document that tells Claude who I am at a human level. Not my offer. Not my audience. Me.
+
+Interview me. Ask one question at a time. Do not ask the next question until I've answered the current one. Do not summarize or restate my answers — just move to the next question.
+
+Questions, in order:
+
+1. How did you end up doing what you do? Short version — 3-4 sentences, before state to now.
+2. What did you walk away from to get here — job, career path, lifestyle? What was the moment you decided to leave it?
+3. What's the opinion you hold about your industry that most people in it would push back on?
+4. Who do you most want to help, and why that specific person?
+5. What are you still figuring out? (Not a weakness. Something real and honest.)
+6. What would you tell someone who's where you were 3 years ago?
+7. Finish this out loud: "I built this because I was sick of ___."
+
+Once I've answered all seven, write my soul.md file. Use my answers directly — don't paraphrase into polished language. Keep my voice. Structure it as: origin story, beliefs, philosophy, defining moments.</textarea>
+        <button class="copy-btn" onclick="copyPrompt('p2', this)">Copy Prompt</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FILE 03: DESIGN.MD ── -->
+<section>
+  <div class="col">
+    <div class="chapter">
+      <span class="chapter-num">03 / design.md</span>
+      <div class="chapter-rule"></div>
+      <span class="chapter-title">How you look</span>
+    </div>
+    <div class="file-section">
+      <div class="file-image">
+        <img src="04_design-md.png" alt="design.md — visual identity" loading="lazy">
+        <div class="file-image-caption">// Colors, fonts, and visual rules</div>
+      </div>
+      <div class="file-top">
+        <div class="file-content">
+          <span class="file-badge">Visual Identity</span>
+          <div class="file-filename">design<br>.md</div>
+          <div class="file-tagline">The file that makes Claude output look like you</div>
+          <p class="file-description">
+            Every color. Every font. Every visual rule. When Claude generates a carousel, an infographic, or any piece of design output, it checks here first. Without this file, everything comes out generic.
+          </p>
+        </div>
+        <ul class="file-bullets">
+          <li><span class="bullet-prefix">//</span> List every brand color with its hex code and when to use it. Don't describe colors in words — give Claude the exact codes.</li>
+          <li><span class="bullet-prefix">//</span> Name your fonts: display font, body font, any specialty fonts. Include when each one gets used.</li>
+          <li><span class="bullet-prefix">//</span> Describe your visual aesthetic in 2-3 adjectives, then explain what that means in practice. "Minimal" means different things to different people.</li>
+          <li><span class="bullet-prefix">//</span> Include the things you never want to see. No gradients. No stock photos. No rounded corners. The no-list is just as important as the yes-list.</li>
+        </ul>
+      </div>
+      <div class="inline-prompt">
+        <div class="inline-prompt-label">// Prompt — drop in a screenshot, then paste this</div>
+        <textarea class="prompt-box" id="p3" rows="2" readonly>turn this into a design system in an html file and a design md file</textarea>
+        <button class="copy-btn" onclick="copyPrompt('p3', this)">Copy Prompt</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FILE 04: VOICE.MD ── -->
+<section class="section--orange">
+  <div class="col">
+    <div class="chapter">
+      <span class="chapter-num">04 / voice.md</span>
+      <div class="chapter-rule"></div>
+      <span class="chapter-title">How you talk</span>
+    </div>
+    <div class="file-section">
+      <div class="file-image">
+        <img src="05_voice-md.png" alt="voice.md — how you talk" loading="lazy">
+        <div class="file-image-caption" style="color: var(--ink-paper); opacity: 0.45;">// Tone, phrasing, and word rules</div>
+      </div>
+      <div class="file-top">
+        <div class="file-content">
+          <span class="file-badge">Communication Rules</span>
+          <div class="file-filename">voice<br>.md</div>
+          <div class="file-tagline" style="color: var(--ink-paper); opacity: 0.75;">Your words. Your tone. Your rules.</div>
+          <p class="file-description" style="color: var(--ink-paper);">
+            This is where Claude learns how you actually talk. Not a generic brand voice doc — your specific phrases, your specific rules, the words you never say and the patterns you always use.
+          </p>
+        </div>
+        <ul class="file-bullets">
+          <li><span class="bullet-prefix">//</span> List the words you never use. These are often more useful than what you do use. "Solopreneur" — never. "Leverage" as a verb — never. Be specific.</li>
+          <li><span class="bullet-prefix">//</span> The prompt works from memory and conversation history — no samples required. Bonus: paste in a post, caption, or email and it extracts the rules directly from your actual language.</li>
+          <li><span class="bullet-prefix">//</span> Break down your voice by format. How you write DMs is different from how you write posts. Both belong here.</li>
+          <li><span class="bullet-prefix">//</span> Write your communication philosophy in one or two sentences. Why do you talk the way you do? The reason behind a rule helps Claude apply it correctly.</li>
+        </ul>
+      </div>
+      <div class="inline-prompt">
+        <div class="inline-prompt-label">// Prompt — works from memory, conversation, or samples</div>
+        <textarea class="prompt-box" id="p4" rows="18" readonly>Create my voice.md file. Follow these steps in order.
+
+Step 1 — Mine what you already know.
+Look at everything I've written in this conversation. Pull out any patterns you can already see: sentence length, vocabulary, what I avoid, how I phrase things. Use this as your starting point.
+
+Step 2 — Check for writing samples.
+If I've attached or pasted any samples (posts, captions, emails, scripts, DMs) — treat those as your primary source. Extract the rules directly from the text, not from assumptions.
+
+Step 3 — Fill gaps with two questions only if needed.
+If steps 1 and 2 don't give you enough, ask me:
+1. What words or phrases do you NEVER want written in your name?
+2. What does a piece of writing that sounds nothing like you look like?
+
+Then generate my voice.md file with: tone in 3-5 adjectives (with what each means in practice), word rules (always/never list), sentence structure, platform-specific rules, and 2 example lines written in my voice as a reference anchor.
+
+Output just the file.</textarea>
+        <button class="copy-btn" onclick="copyPrompt('p4', this)">Copy Prompt</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FILE 05: AUDIENCE.MD ── -->
+<section class="section--bone">
+  <div class="col">
+    <div class="chapter">
+      <span class="chapter-num">05 / audience.md</span>
+      <div class="chapter-rule"></div>
+      <span class="chapter-title">Who you serve</span>
+    </div>
+    <div class="file-section">
+      <div class="file-image">
+        <img src="06_audience-md.png" alt="audience.md — who you serve" loading="lazy">
+        <div class="file-image-caption">// ICP, pain points, offer, their language</div>
+      </div>
+      <div class="file-top">
+        <div class="file-content">
+          <span class="file-badge">Your People</span>
+          <div class="file-filename">audience<br>.md</div>
+          <div class="file-tagline">Their pain, their language, your offer</div>
+          <p class="file-description">
+            This is everything Claude needs to write for your audience — not about your audience. Their fears. Their wins. The exact words they use to describe their problem. And your offer, explained in plain terms.
+          </p>
+        </div>
+        <ul class="file-bullets">
+          <li><span class="bullet-prefix">//</span> Describe their daily reality. Not demographics — what a Tuesday looks like for them. What frustrations they carry. What they're quietly afraid of.</li>
+          <li><span class="bullet-prefix">//</span> Paste real language from real people. Comments, DMs, reviews. The exact phrases your audience uses are gold. Claude mirrors this language — and it's what makes content feel like it was written for them specifically.</li>
+          <li><span class="bullet-prefix">//</span> Name their dream outcome. Not what you think they want — what they actually say they want. Write it in their words, not yours.</li>
+          <li><span class="bullet-prefix">//</span> Include your offer here. What it is, why they buy it, who it's not for. Claude needs this to write CTAs, pitch copy, and anything that converts.</li>
+        </ul>
+      </div>
+      <div class="inline-prompt">
+        <div class="inline-prompt-label">// Prompt — Claude interviews you, then researches your audience on Reddit and the web</div>
+        <textarea class="prompt-box" id="p5" rows="18" readonly>Build my audience.md file. Follow this process in order.
+
+Step 1 — Interview me.
+Ask these questions one at a time. Wait for my answer before moving on.
+
+1. Who are you trying to reach? Describe them in plain terms — what they do, where they are in life, what they're trying to figure out.
+2. What's the main problem you help them solve?
+3. What do you sell or offer, and what does it cost?
+4. Where does your audience hang out online? (Reddit, Instagram, YouTube, LinkedIn, forums?)
+
+Step 2 — Research their actual language.
+Once I've answered, search Reddit and the web for threads where people like my audience talk about this problem. Find the most-engaged posts and pull exact quotes. Also search reviews of similar products or communities in my space.
+
+Extract specifically:
+- Pain points — what they complain about, what's broken, what frustrates them daily
+- Fears — what they're afraid of, what holds them back, what keeps them stuck
+- Dreams and goals — what they say they want, what success looks like to them
+- Exact language — the phrases that repeat, the words they reach for, the way they describe their situation
+
+Step 3 — Generate the file.
+Combine my answers with the real language you found. Output a complete audience.md file with real quotes embedded throughout — not invented personas.</textarea>
+        <button class="copy-btn" onclick="copyPrompt('p5', this)">Copy Prompt</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TEMPLATE BAND ── -->
+<div class="template-band">
+  <div class="col">
+    <div class="band-heading">Start Here.</div>
+    <div class="band-sub">Grab the templates. Fill in the blanks. You're done.</div>
+    <div class="template-grid">
+      <div class="template-cell">
+        <span class="template-cell-name">CLAUDE.md</span>
+        <span class="template-cell-desc">Master rules + file map template</span>
+      </div>
+      <div class="template-cell">
+        <span class="template-cell-name">soul.md</span>
+        <span class="template-cell-desc">Origin story + beliefs template</span>
+      </div>
+      <div class="template-cell">
+        <span class="template-cell-name">design.md</span>
+        <span class="template-cell-desc">Color palette + font template</span>
+      </div>
+      <div class="template-cell">
+        <span class="template-cell-name">voice.md</span>
+        <span class="template-cell-desc">Tone + word rules template</span>
+      </div>
+      <div class="template-cell">
+        <span class="template-cell-name">audience.md</span>
+        <span class="template-cell-desc">ICP + offer + language template</span>
+      </div>
+    </div>
+    <p style="font-family: var(--font-meta); font-size: 11px; color: var(--ink-charcoal); opacity: 0.45; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 20px;">
+      // All 5 templates are in the /templates folder — open, fill in, save to your ~/.claude/ directory
+    </p>
+  </div>
+</div>
+
+<!-- ── CLOSING ── -->
+<section class="closing">
+  <div class="col">
+    <div class="closing-label">// The Point</div>
+    <p class="closing-line">Every time you prompt Claude without context, you're starting from scratch.</p>
+    <p class="closing-line">These files mean you never have to explain yourself again.</p>
+    <div class="closing-statement">THE SETUP<br>IS THE SHORTCUT.</div>
+    <div class="closing-sub">// five files — thirty minutes — permanent leverage</div>
+  </div>
+</section>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const scrollTop = document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const pct = scrollTop / scrollHeight * 100;
+    document.getElementById('progress').style.height = pct + '%';
+  });
+
+  function copyPrompt(id, btn) {
+    const text = document.getElementById(id).value;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copy Prompt';
+        btn.classList.remove('copied');
+      }, 1800);
+    });
+  }
+</script>
+
+</body>
+</html>

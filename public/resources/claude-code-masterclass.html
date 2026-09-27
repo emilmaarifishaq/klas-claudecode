@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Claude Code Masterclass — Duncan Rogoff</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0a0a0a;
+      --bg-alt:   #0f0f0f;
+      --surface:  #131313;
+      --border:   #1c1c1c;
+      --border2:  #272727;
+      --muted:    #444;
+      --light:    #878787;
+      --white:    #f2f2ec;
+      --accent:   #00ff66;
+      --accent-dim: rgba(0,255,102,0.08);
+      --display:  'Bebas Neue', sans-serif;
+      --body:     'DM Sans', sans-serif;
+      --mono:     'JetBrains Mono', monospace;
+      --ease:     cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--body);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Grain — fixed, pointer-events-none, no scroll repaint */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.038;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+
+    /* ─── Layout ─── */
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 2.5rem;
+    }
+
+    .label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.64rem;
+      font-weight: 400;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.2rem;
+    }
+    .label::before { content: '> '; opacity: 0.45; }
+
+    /* ─── Buttons ─── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 0.9rem 2.25rem;
+      background: radial-gradient(62% 56% at 50% 50%, #00d958 0%, var(--accent) 100%);
+      color: #070707;
+      font-family: var(--body);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      border-radius: 28px;
+      cursor: pointer;
+      isolation: isolate;
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.45),
+        inset 0 0 0 0.5px rgba(255,255,255,0.28),
+        inset 1px 1px 0 -0.5px rgba(255,255,255,0.4),
+        inset -1px -1px 0 -0.5px rgba(0,0,0,0.12),
+        0 0 0 0 rgba(0,255,102,0);
+      transition: box-shadow 0.35s var(--ease);
+    }
+    .btn:hover {
+      box-shadow:
+        0 0 0 1px rgba(0,0,0,0.45),
+        inset 0 0 0 0.5px rgba(255,255,255,0.28),
+        inset 1px 1px 0 -0.5px rgba(255,255,255,0.4),
+        inset -1px -1px 0 -0.5px rgba(0,0,0,0.12),
+        0 0 20px rgba(0,255,102,0.38),
+        0 0 6px  rgba(0,255,102,0.22);
+    }
+    .btn:active { transform: scale(0.98); }
+
+    .btn-text { position: relative; z-index: 1; }
+
+    .btn-fill {
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0.92);
+      transform: translateY(102%);
+      transition: transform 0.45s var(--ease);
+      z-index: 0;
+    }
+    .btn:hover .btn-fill           { transform: translate(0, 0); }
+    .btn.dir-top .btn-fill         { transform: translateY(-102%); }
+    .btn.dir-left .btn-fill        { transform: translateX(-102%); }
+    .btn.dir-right .btn-fill       { transform: translateX(102%); }
+    .btn.dir-top:hover .btn-fill,
+    .btn.dir-left:hover .btn-fill,
+    .btn.dir-right:hover .btn-fill { transform: translate(0, 0); }
+
+    /* ─── Scroll reveals ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.75s var(--ease), transform 0.75s var(--ease);
+      transition-delay: var(--delay, 0ms);
+    }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+
+    /* ══════════════════════════════════
+       HERO
+    ══════════════════════════════════ */
+    #hero {
+      position: relative;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      padding: 8rem 0 6rem;
+      overflow: hidden;
+    }
+
+    #hero-dots {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.065) 1px, transparent 1px);
+      background-size: 28px 28px;
+      -webkit-mask-image: radial-gradient(ellipse 75% 75% at 70% 40%, black 20%, transparent 100%);
+      mask-image: radial-gradient(ellipse 75% 75% at 70% 40%, black 20%, transparent 100%);
+    }
+
+    #hero-glow {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 50% 55% at 82% 32%, rgba(0,255,102,0.05) 0%, transparent 70%),
+        radial-gradient(ellipse 35% 35% at 15% 80%, rgba(0,255,102,0.025) 0%, transparent 70%);
+    }
+
+    .hero-bar {
+      position: absolute;
+      left: 2.5rem;
+      top: 16%;
+      bottom: 16%;
+      width: 2px;
+      background: linear-gradient(to bottom, transparent, var(--accent) 18%, var(--accent) 82%, transparent);
+      opacity: 0;
+      animation: fadeIn 0.8s var(--ease) 1.5s forwards;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 4.5rem;
+      align-items: center;
+      width: 100%;
+      padding-left: 4rem;
+      pointer-events: none;
+    }
+    .hero-inner a,
+    .hero-inner button,
+    .hero-inner [role="button"] {
+      pointer-events: auto;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.64rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: slideUp 0.6s var(--ease) 0.1s forwards;
+    }
+    .hero-eyebrow::before { content: '> '; opacity: 0.45; }
+
+    h1.hero-headline {
+      font-family: var(--display);
+      line-height: 0.9;
+      letter-spacing: 0.01em;
+      margin-bottom: 2rem;
+    }
+
+    .hero-line {
+      display: block;
+      font-size: clamp(62px, 8vw, 106px);
+      opacity: 0;
+    }
+    .hero-line.live { opacity: 1; }
+    .hero-line em { font-style: normal; color: var(--accent); }
+
+    /* Blinking terminal cursor via ::after */
+    #hl3.show-cursor::after {
+      content: '_';
+      font-family: var(--display);
+      color: var(--accent);
+      animation: blink 0.75s step-end infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
+    .hero-sub {
+      font-size: 1rem;
+      line-height: 1.75;
+      color: var(--light);
+      max-width: 440px;
+      margin-bottom: 2.5rem;
+      font-weight: 400;
+      opacity: 0;
+      animation: slideUp 0.7s var(--ease) 1.7s forwards;
+    }
+
+    .hero-cta-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      opacity: 0;
+      animation: slideUp 0.7s var(--ease) 1.85s forwards;
+    }
+
+    .hero-trust {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 0.07em;
+    }
+
+    /* Hero visual panel — image + stats overlay */
+    .hero-visual-panel {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-panel-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0.22;
+      filter: brightness(0.55) saturate(0.3);
+      pointer-events: none;
+    }
+
+    /* Vignette over panel image */
+    .hero-visual-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to right,  var(--bg) 0%, transparent 30%),
+        linear-gradient(to bottom, var(--bg) 0%, transparent 20%, transparent 80%, var(--bg) 100%);
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .hero-stats {
+      position: relative;
+      z-index: 2;
+      opacity: 0;
+      animation: slideUp 0.8s var(--ease) 2s forwards;
+    }
+
+    .hero-stat { padding: 1.15rem 0; border-bottom: 1px solid var(--border); }
+    .hero-stat:first-child { border-top: 1px solid var(--border); }
+    .hero-stat .n {
+      font-family: var(--display);
+      font-size: 2.4rem;
+      line-height: 1;
+      color: var(--white);
+      display: block;
+    }
+    .hero-stat .l {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      display: block;
+      margin-top: 0.2rem;
+    }
+
+    /* ══════════════════════════════════
+       MARQUEE
+    ══════════════════════════════════ */
+    .marquee-band {
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 0.8rem 0;
+      background: var(--bg-alt);
+    }
+
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee 26s linear infinite;
+    }
+    .marquee-track.rev { animation-direction: reverse; }
+    .marquee-track:hover { animation-play-state: paused; }
+
+    .marquee-track span {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+      padding-right: 2.5rem;
+    }
+    .marquee-dot { color: var(--accent) !important; margin-right: 2.5rem; letter-spacing: 0 !important; }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ══════════════════════════════════
+       AUDIENCE / PAIN
+    ══════════════════════════════════ */
+    #audience {
+      padding: 8rem 0;
+      background: var(--bg-alt);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .audience-header {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 4rem;
+      align-items: end;
+      margin-bottom: 4.5rem;
+    }
+
+    h2.audience-headline {
+      font-family: var(--display);
+      font-size: clamp(40px, 5vw, 62px);
+      line-height: 1;
+    }
+
+    .audience-note {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.75;
+      align-self: end;
+    }
+
+    /* Numbered stack — no 3-col card grid */
+    .pain-list { list-style: none; }
+
+    .pain-item {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 2rem;
+      align-items: start;
+      padding: 2.25rem 0.75rem;
+      border-top: 1px solid var(--border);
+      margin: 0 -0.75rem;
+      transition: background 0.25s var(--ease);
+      cursor: default;
+    }
+    .pain-item:last-child { border-bottom: 1px solid var(--border); }
+    .pain-item:hover { background: rgba(255,255,255,0.016); }
+    .pain-item:hover .pain-num { color: var(--accent); }
+    .pain-item:hover .pain-ico { color: var(--accent); }
+    .pain-item:hover .pain-title { color: var(--white); }
+
+    /* Large faded number — the signature element of this section */
+    .pain-num {
+      font-family: var(--display);
+      font-size: clamp(60px, 7vw, 88px);
+      line-height: 0.85;
+      color: var(--border2);
+      letter-spacing: -0.01em;
+      transition: color 0.3s var(--ease);
+      margin-top: -0.08em;
+      user-select: none;
+    }
+
+    .pain-right {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      padding-top: 0.25rem;
+    }
+
+    .pain-ico {
+      flex-shrink: 0;
+      color: var(--muted);
+      transition: color 0.25s var(--ease);
+      margin-top: 2px;
+    }
+
+    .pain-title {
+      font-size: 0.93rem;
+      font-weight: 600;
+      color: var(--light);
+      margin-bottom: 0.35rem;
+      line-height: 1.4;
+      transition: color 0.25s var(--ease);
+    }
+
+    .pain-desc {
+      font-family: var(--mono);
+      font-size: 0.73rem;
+      color: var(--muted);
+      line-height: 1.65;
+      letter-spacing: 0.02em;
+    }
+
+    /* ══════════════════════════════════
+       OUTCOMES
+    ══════════════════════════════════ */
+    #outcomes { padding: 8rem 0; }
+
+    .outcomes-inner {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 7rem;
+      align-items: start;
+    }
+
+    .outcomes-sticky {
+      position: sticky;
+      top: 4rem;
+    }
+
+    .outcomes-sticky h2 {
+      font-family: var(--display);
+      font-size: clamp(34px, 4vw, 52px);
+      line-height: 0.93;
+      margin-top: 1.2rem;
+    }
+
+    .outcome-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .outcome-item {
+      --active: 0;
+      --start: 0;
+      position: relative;
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 1.25rem;
+      align-items: start;
+      padding: 1.4rem 1.25rem;
+      border-radius: 10px;
+      border: 0.75px solid var(--border);
+      background: var(--bg-alt);
+      transition: border-color 0.3s var(--ease);
+    }
+    .outcome-item:hover { border-color: var(--border2); }
+    .outcome-item:hover .o-num { color: var(--white); }
+
+    /* Glowing arc border — follows mouse around the card */
+    .outcome-item::after {
+      content: '';
+      pointer-events: none;
+      position: absolute;
+      inset: -2px;
+      border-radius: inherit;
+      border: 2px solid transparent;
+      background:
+        radial-gradient(circle, #00ff66 10%, rgba(0,255,102,0) 20%),
+        radial-gradient(circle at 40% 40%, #00cc55 5%, rgba(0,204,85,0) 15%),
+        radial-gradient(circle at 60% 60%, #00e680 10%, rgba(0,230,128,0) 20%),
+        repeating-conic-gradient(
+          from 236.84deg at 50% 50%,
+          #00ff66 0%,
+          rgba(0,204,85,0.7) calc(25% / 5),
+          #00e680 calc(50% / 5),
+          rgba(0,255,102,0.5) calc(75% / 5),
+          #00ff66 calc(100% / 5)
+        );
+      background-attachment: fixed;
+      opacity: var(--active);
+      transition: opacity 0.35s ease;
+      mask-clip: padding-box, border-box;
+      mask-composite: intersect;
+      mask-image:
+        linear-gradient(#0000, #0000),
+        conic-gradient(
+          from calc((var(--start) - 35) * 1deg),
+          #0000 0deg,
+          white,
+          #0000 70deg
+        );
+    }
+
+    .o-num {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--accent);
+      padding-top: 4px;
+      letter-spacing: 0.04em;
+      transition: color 0.25s var(--ease);
+    }
+
+    .o-body strong {
+      display: block;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 0.25rem;
+      line-height: 1.4;
+    }
+    .o-body p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ══════════════════════════════════
+       INSTRUCTOR
+    ══════════════════════════════════ */
+    #instructor {
+      padding: 8rem 0;
+      background: var(--bg-alt);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .instructor-inner {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .headshot-box {
+      width: 100%;
+      aspect-ratio: 3/4;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .headshot-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .headshot-ph {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      background:
+        repeating-linear-gradient(
+          -45deg,
+          transparent, transparent 8px,
+          rgba(24,24,24,0.9) 8px, rgba(24,24,24,0.9) 9px
+        ),
+        var(--surface);
+    }
+    .headshot-ph span {
+      font-family: var(--display);
+      font-size: 0.95rem;
+      color: var(--border2);
+      letter-spacing: 0.2em;
+      background: var(--bg-alt);
+      padding: 0.4rem 0.85rem;
+    }
+    .headshot-box::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 45%;
+      background: linear-gradient(to top, rgba(12,12,12,0.85), transparent);
+      pointer-events: none;
+    }
+    .headshot-tag {
+      position: absolute;
+      bottom: 0; left: 0; z-index: 2;
+      background: var(--accent);
+      color: #070707;
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.35rem 0.8rem;
+    }
+
+    .instructor-right { padding-top: 0.25rem; }
+
+    h2.instructor-name {
+      font-family: var(--display);
+      font-size: clamp(54px, 8vw, 108px);
+      line-height: 0.87;
+      letter-spacing: 0.01em;
+      margin-bottom: 1.75rem;
+    }
+
+    .instructor-bio {
+      font-size: 0.97rem;
+      color: var(--light);
+      line-height: 1.8;
+      font-weight: 400;
+      max-width: 480px;
+      margin-bottom: 3rem;
+    }
+    .instructor-bio p + p { margin-top: 0.875rem; }
+
+    .instructor-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .i-stat { padding: 1.5rem 0; border-right: 1px solid var(--border); }
+    .i-stat:nth-child(2) { padding-left: 1.5rem; }
+    .i-stat:last-child { border-right: none; padding-left: 1.5rem; }
+
+    .i-stat .n {
+      font-family: var(--display);
+      font-size: 2.6rem;
+      line-height: 1;
+      color: var(--accent);
+      display: block;
+    }
+    .i-stat .c {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 0.3rem;
+      display: block;
+    }
+
+    /* ══════════════════════════════════
+       PRICING
+    ══════════════════════════════════ */
+    #pricing { padding: 8rem 0; }
+
+    .pricing-inner {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 7rem;
+      align-items: start;
+    }
+
+    h2.pricing-headline {
+      font-family: var(--display);
+      font-size: clamp(44px, 5.5vw, 68px);
+      line-height: 0.93;
+      margin-bottom: 2.75rem;
+    }
+
+    .includes-list { list-style: none; }
+
+    .includes-item {
+      display: flex;
+      gap: 0.9rem;
+      align-items: flex-start;
+      padding: 1.1rem 0;
+      border-top: 1px solid var(--border);
+      font-size: 0.88rem;
+      color: var(--light);
+      line-height: 1.5;
+    }
+    .includes-item:last-child { border-bottom: 1px solid var(--border); }
+    .inc-ico { flex-shrink: 0; color: var(--accent); margin-top: 2px; }
+
+    .pricing-right { position: sticky; top: 4rem; }
+
+    .price-was {
+      font-family: var(--display);
+      font-size: clamp(28px, 3.5vw, 42px);
+      color: var(--muted);
+      text-decoration: line-through;
+      text-decoration-color: var(--muted);
+      display: block;
+      margin-bottom: 0.2rem;
+      letter-spacing: 0.02em;
+    }
+
+    .price-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #070707;
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.7rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .price-num {
+      font-family: var(--display);
+      font-size: clamp(96px, 14vw, 158px);
+      line-height: 0.84;
+      color: var(--accent);
+      display: block;
+      letter-spacing: 0.01em;
+      margin-bottom: 0.6rem;
+    }
+
+    .price-meta {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 2.25rem;
+      padding-bottom: 2.25rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .cta-group {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.75rem;
+    }
+
+    .micro {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    /* ─── Footer ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 1.75rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    footer p {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ══════════════════════════════════
+       SPLINE HERO BACKGROUND
+    ══════════════════════════════════ */
+    .hero-spline {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      opacity: 0.22;
+      -webkit-mask-image: radial-gradient(
+        ellipse 68% 82% at 52% 52%,
+        black 0%,
+        rgba(0,0,0,0.55) 42%,
+        transparent 72%
+      );
+      mask-image: radial-gradient(
+        ellipse 68% 82% at 52% 52%,
+        black 0%,
+        rgba(0,0,0,0.55) 42%,
+        transparent 72%
+      );
+    }
+    .hero-spline spline-viewer {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* ══════════════════════════════════
+       TESTIMONIALS
+    ══════════════════════════════════ */
+    #testimonials {
+      padding: 8rem 0;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .testimonials-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+    .testimonials-header h2 {
+      font-family: var(--display);
+      font-size: clamp(36px, 4.5vw, 58px);
+      line-height: 0.93;
+      margin-top: 1rem;
+    }
+    .testimonials-header p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 0.75rem;
+    }
+
+    .testimonials-columns {
+      display: flex;
+      gap: 1.25rem;
+      justify-content: center;
+      max-height: 680px;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
+    }
+
+    .t-col {
+      width: 300px;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+    .t-col:nth-child(2) { display: none; }
+    .t-col:nth-child(3) { display: none; }
+
+    @media (min-width: 768px) { .t-col:nth-child(2) { display: block; } }
+    @media (min-width: 1024px) { .t-col:nth-child(3) { display: block; } }
+
+    .t-col-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      animation: scrollUp var(--dur, 18s) linear infinite;
+    }
+    .t-col-inner:hover { animation-play-state: paused; }
+
+    @keyframes scrollUp {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-50%); }
+    }
+
+    .t-card {
+      background: var(--bg-alt);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      transition: border-color 0.25s var(--ease);
+      position: relative;
+    }
+    .t-card:hover { border-color: var(--border2); }
+
+    .t-text {
+      font-size: 0.85rem;
+      color: var(--light);
+      line-height: 1.75;
+      font-weight: 300;
+      margin-bottom: 1.25rem;
+    }
+    .t-author {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .t-avatar {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid var(--border2);
+      flex-shrink: 0;
+    }
+    .t-name {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--white);
+      line-height: 1.3;
+    }
+    .t-role {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      margin-top: 0.15rem;
+    }
+
+    /* ══════════════════════════════════
+       BORDER TRAIL — pricing card
+    ══════════════════════════════════ */
+    .pricing-right {
+      position: sticky;
+      top: 4rem;
+    }
+    .pricing-trail-wrap {
+      position: relative;
+    }
+    .pricing-trail-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border: 1px solid var(--border);
+      pointer-events: none;
+    }
+    .pricing-trail-wrap::after {
+      content: '';
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      background: radial-gradient(circle, rgba(0,255,102,0.5) 0%, transparent 70%);
+      filter: blur(12px);
+      pointer-events: none;
+      offset-path: rect(0 auto auto 0 round 0px);
+      offset-distance: 0%;
+      animation: trailOrbit 4s linear infinite;
+      z-index: 0;
+    }
+    @keyframes trailOrbit {
+      to { offset-distance: 100%; }
+    }
+
+    /* ══════════════════════════════════
+       MOUSE GLOW — pain items
+    ══════════════════════════════════ */
+    .pain-item {
+      position: relative;
+    }
+    .pain-glow {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: 0;
+      background: radial-gradient(
+        180px circle at var(--gx, 50%) var(--gy, 50%),
+        rgba(0,255,102,0.045),
+        transparent
+      );
+      opacity: 0;
+      transition: opacity 0.3s var(--ease);
+    }
+    .pain-item:hover .pain-glow { opacity: 1; }
+
+    /* ─── Keyframes ─── */
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    /* ══════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════ */
+    @media (max-width: 960px) {
+      .hero-inner       { grid-template-columns: 1fr; padding-left: 0; }
+      .hero-stats       { display: none; }
+      .hero-bar         { display: none; }
+      .audience-header  { grid-template-columns: 1fr; gap: 1.25rem; }
+      .outcomes-inner   { grid-template-columns: 1fr; gap: 2.5rem; }
+      .outcomes-sticky  { position: static; }
+      .instructor-inner { grid-template-columns: 1fr; }
+      .instructor-right { order: -1; }
+      .headshot-box     { max-width: 280px; aspect-ratio: 1/1; }
+      .pricing-inner    { grid-template-columns: 1fr; gap: 3.5rem; }
+      .pricing-right    { position: static; }
+    }
+
+    @media (max-width: 600px) {
+      .container { padding: 0 1.25rem; }
+      .pain-item { grid-template-columns: 72px 1fr; gap: 1.25rem; }
+      .instructor-stats { grid-template-columns: 1fr 1fr; }
+      .instructor-stats .i-stat:last-child {
+        grid-column: 1 / -1;
+        border-right: none;
+        padding-left: 0;
+        border-top: 1px solid var(--border);
+      }
+      .instructor-stats .i-stat:nth-child(2) { padding-left: 0; }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     1. HERO
+══════════════════════════════════ -->
+<section id="hero">
+  <div id="hero-dots" aria-hidden="true"></div>
+  <div id="hero-glow" aria-hidden="true"></div>
+  <div class="hero-bar" aria-hidden="true"></div>
+  <div class="hero-spline" aria-hidden="true">
+    <spline-viewer url="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"></spline-viewer>
+  </div>
+  <div class="container">
+    <div class="hero-inner">
+      <div>
+        <p class="hero-eyebrow"><!-- LOGO — insert wordmark/icon here --> Claude Code Masterclass</p>
+        <h1 class="hero-headline" aria-label="Ship Real AI Products. With Claude Code.">
+          <span class="hero-line" id="hl1">SHIP REAL</span>
+          <span class="hero-line" id="hl2">AI PRODUCTS.</span>
+          <span class="hero-line" id="hl3">WITH CLAUDE CODE.</span>
+        </h1>
+        <p class="hero-sub">A hands-on masterclass for builders who are done watching tutorials and ready to build.</p>
+        <div class="hero-cta-wrap">
+          <a href="#" class="btn"><!-- Replace with checkout URL -->
+            <span class="btn-text">Enroll Now — $97 <s style="opacity:0.5;font-weight:400;">$197</s></span>
+            <span class="btn-fill" aria-hidden="true"></span>
+          </a>
+          <span class="hero-trust">Taught by Duncan Rogoff · 150K+ followers · Early bird pricing</span>
+        </div>
+      </div>
+      <div class="hero-visual-panel">
+        <img class="hero-panel-img" src="/Users/duncanrogoff/Desktop/The%20Build%20Room/_Brand%20Assets/_BrandHeroVisuals/Images/Establishing/09_shadow_pattern_geometric.jpg" alt="" aria-hidden="true" />
+        <div class="hero-stats" aria-label="Key stats">
+          <div class="hero-stat"><span class="n">150K+</span><span class="l">Followers, under 12 months</span></div>
+          <div class="hero-stat"><span class="n">$200K+</span><span class="l">Annual agency revenue</span></div>
+          <div class="hero-stat"><span class="n">3,500+</span><span class="l">Automation templates sold</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     MARQUEE
+══════════════════════════════════ -->
+<div class="marquee-band" aria-hidden="true">
+  <div class="marquee-track">
+    <span>Ship with Claude Code <span class="marquee-dot">·</span> Build like a senior dev <span class="marquee-dot">·</span> Brief → Build → Ship <span class="marquee-dot">·</span> Stop guessing <span class="marquee-dot">·</span> Start shipping <span class="marquee-dot">·</span></span>
+    <span>Ship with Claude Code <span class="marquee-dot">·</span> Build like a senior dev <span class="marquee-dot">·</span> Brief → Build → Ship <span class="marquee-dot">·</span> Stop guessing <span class="marquee-dot">·</span> Start shipping <span class="marquee-dot">·</span></span>
+    <span>Ship with Claude Code <span class="marquee-dot">·</span> Build like a senior dev <span class="marquee-dot">·</span> Brief → Build → Ship <span class="marquee-dot">·</span> Stop guessing <span class="marquee-dot">·</span> Start shipping <span class="marquee-dot">·</span></span>
+    <span>Ship with Claude Code <span class="marquee-dot">·</span> Build like a senior dev <span class="marquee-dot">·</span> Brief → Build → Ship <span class="marquee-dot">·</span> Stop guessing <span class="marquee-dot">·</span> Start shipping <span class="marquee-dot">·</span></span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     2. PAIN
+══════════════════════════════════ -->
+<section id="audience">
+  <div class="container">
+    <div class="audience-header">
+      <div>
+        <span class="label reveal">Built For</span>
+        <h2 class="audience-headline reveal">You've seen Claude.<br />You haven't shipped with it.</h2>
+      </div>
+      <p class="audience-note reveal">Three patterns that keep builders stuck — and the reason this exists.</p>
+    </div>
+    <ul class="pain-list" role="list">
+      <li class="pain-item reveal">
+        <span class="pain-glow" aria-hidden="true"></span>
+        <span class="pain-num" aria-hidden="true">01</span>
+        <div class="pain-right">
+          <span class="pain-ico" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/><line x1="13" y1="17" x2="8" y2="17"/>
+            </svg>
+          </span>
+          <div>
+            <p class="pain-title">You're copy-pasting from docs and guessing</p>
+            <p class="pain-desc">No system. No structure. No output.</p>
+          </div>
+        </div>
+      </li>
+      <li class="pain-item reveal" style="--delay:80ms">
+        <span class="pain-glow" aria-hidden="true"></span>
+        <span class="pain-num" aria-hidden="true">02</span>
+        <div class="pain-right">
+          <span class="pain-ico" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+              <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+          </span>
+          <div>
+            <p class="pain-title">You've tried Claude Code and hit a wall</p>
+            <p class="pain-desc">Setup issues, confusing commands, no workflow.</p>
+          </div>
+        </div>
+      </li>
+      <li class="pain-item reveal" style="--delay:160ms">
+        <span class="pain-glow" aria-hidden="true"></span>
+        <span class="pain-num" aria-hidden="true">03</span>
+        <div class="pain-right">
+          <span class="pain-ico" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </span>
+          <div>
+            <p class="pain-title">You're building manually when Claude could do it</p>
+            <p class="pain-desc">You're leaving 80% of the tool on the table.</p>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     3. OUTCOMES
+══════════════════════════════════ -->
+<section id="outcomes">
+  <div class="container">
+    <div class="outcomes-inner">
+      <div class="outcomes-sticky">
+        <span class="label reveal">What's Inside</span>
+        <h2 class="reveal">Here's What You Walk Away With</h2>
+      </div>
+      <ul class="outcome-list">
+        <li class="outcome-item reveal">
+          <span class="o-num">01</span>
+          <div class="o-body"><strong>A working Claude Code setup configured for real project work</strong><p>Not a demo environment. A system that holds up on actual builds.</p></div>
+        </li>
+        <li class="outcome-item reveal" style="--delay:60ms">
+          <span class="o-num">02</span>
+          <div class="o-body"><strong>A personal command library you'll use on every build</strong><p>Custom slash commands and hooks tailored to how you work.</p></div>
+        </li>
+        <li class="outcome-item reveal" style="--delay:120ms">
+          <span class="o-num">03</span>
+          <div class="o-body"><strong>A repeatable agentic workflow: brief → build → ship</strong><p>The same loop Duncan runs for every client project.</p></div>
+        </li>
+        <li class="outcome-item reveal" style="--delay:180ms">
+          <span class="o-num">04</span>
+          <div class="o-body"><strong>Live walkthroughs of actual client-grade builds</strong><p>Not toy examples. Real output at real scope.</p></div>
+        </li>
+        <li class="outcome-item reveal" style="--delay:240ms">
+          <span class="o-num">05</span>
+          <div class="o-body"><strong>The exact slash commands, hooks, and session patterns Duncan uses daily</strong><p>Straight from production. Nothing held back.</p></div>
+        </li>
+        <li class="outcome-item reveal" style="--delay:300ms">
+          <span class="o-num">06</span>
+          <div class="o-body"><strong>A reusable system you can drop into any new project in under 10 minutes</strong><p>Build once. Use forever.</p></div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     4. INSTRUCTOR
+══════════════════════════════════ -->
+<section id="instructor">
+  <div class="container">
+    <div class="instructor-inner">
+      <div class="reveal">
+        <div class="headshot-box">
+          <img src="/Users/duncanrogoff/Desktop/The%20Build%20Room/_Brand%20Assets/_BrandHeroVisuals/Images/Character/03_low_angle_authority.jpg" alt="Duncan Rogoff" />
+          <div class="headshot-tag">Duncan Rogoff</div>
+        </div>
+      </div>
+      <div class="instructor-right">
+        <span class="label reveal">The Instructor</span>
+        <h2 class="instructor-name reveal">Duncan<br />Rogoff</h2>
+        <div class="instructor-bio reveal">
+          <p>Former Senior Art Director — Apple, PlayStation, Nissan. Now runs a six-figure AI automation agency and The Build Room, a community of operators learning to build with AI.</p>
+          <p>150K+ followers built in under 12 months. He teaches by shipping, not theorizing.</p>
+        </div>
+        <div class="instructor-stats reveal">
+          <div class="i-stat"><span class="n">150K+</span><span class="c">Audience in 12 months</span></div>
+          <div class="i-stat"><span class="n">$200K+</span><span class="c">Annual agency revenue</span></div>
+          <div class="i-stat"><span class="n">3,500+</span><span class="c">Templates sold</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE 2 -->
+<div class="marquee-band" aria-hidden="true">
+  <div class="marquee-track rev">
+    <span>Working setup <span class="marquee-dot">·</span> Command library <span class="marquee-dot">·</span> Agentic workflow <span class="marquee-dot">·</span> Real builds <span class="marquee-dot">·</span> Duncan's daily patterns <span class="marquee-dot">·</span></span>
+    <span>Working setup <span class="marquee-dot">·</span> Command library <span class="marquee-dot">·</span> Agentic workflow <span class="marquee-dot">·</span> Real builds <span class="marquee-dot">·</span> Duncan's daily patterns <span class="marquee-dot">·</span></span>
+    <span>Working setup <span class="marquee-dot">·</span> Command library <span class="marquee-dot">·</span> Agentic workflow <span class="marquee-dot">·</span> Real builds <span class="marquee-dot">·</span> Duncan's daily patterns <span class="marquee-dot">·</span></span>
+    <span>Working setup <span class="marquee-dot">·</span> Command library <span class="marquee-dot">·</span> Agentic workflow <span class="marquee-dot">·</span> Real builds <span class="marquee-dot">·</span> Duncan's daily patterns <span class="marquee-dot">·</span></span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     5. TESTIMONIALS
+══════════════════════════════════ -->
+<section id="testimonials">
+  <div class="container">
+    <div class="testimonials-header reveal">
+      <span class="label">Results</span>
+      <h2>What The Build Room Members Say</h2>
+      <p>Real wins from real builders inside the community.</p>
+    </div>
+  </div>
+
+  <div class="testimonials-columns">
+
+    <!-- Column 1 — wins/numbers, 20s -->
+    <div class="t-col">
+      <div class="t-col-inner" style="--dur:20s">
+
+        <div class="t-card">
+          <p class="t-text">"$180k contract signed! Biggest contract of my career thus far."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/8ad04e11-4767-4dba-9e4e-f9bdef8a2ce3_7745a4b8-56c9-4cee-802d-571b88dd5d4c_2122d9d830eb40009ef5f018ecd0a081963d534655f84dbe922a91fa5607874a.jpeg?width=63&height=63&format=webp" alt="Eric Michaud" />
+            <div><div class="t-name">Eric Michaud</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+
+        <div class="t-card">
+          <p class="t-text">"Just landed a new client on Upwork. They reached out direct, no connects spent. Signed a 3-month mini-retainer at $1500/month — he paid the first milestone right away."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/3fdd26d3-4911-41c3-bcfd-db107906b869_78ac452c-1afd-41d1-82bb-1174ad4ca7fb_49dfdbcf3d02457d8919f82dabe6606711ff9c2317f74b31aaed0678cdc0ed68.jpeg?width=63&height=63&format=webp" alt="Jonathan Richey" />
+            <div><div class="t-name">Jonathan Richey</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+
+        <div class="t-card">
+          <p class="t-text">"Signed my first client for $6K build and $1200/mth!"</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/7c61a6e9-cfaa-42b9-ad72-2f60160cfe7b_45f9836d-9c5f-4979-87c6-847e4e67ccc6_273a25f7d6a44a03b8e43330a45600d68656bbfd6047471183559dbe743e1767.jpeg?width=63&height=63&format=webp" alt="Awesome MrT" />
+            <div><div class="t-name">Awesome MrT</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+
+        <div class="t-card">
+          <p class="t-text">"Have our first Lead Gen client. $26,500 (4.5K setup / 2K Monthly) ARR leveraging Instantly, Indeed, Apify, Clay and Make.com/N8N."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/3eb56286-4c4b-4793-ac32-7fd17ea031a6_5dda2f74-2b80-499c-bc48-e4bc0dbb83f7_3ff915cc8f3a4c7ba5ff23d143cfdd219ddc30ec72014c968982f3f8d74c1e81.jpeg?width=63&height=63&format=webp" alt="Keith Mortier" />
+            <div><div class="t-name">Keith Mortier</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+
+        <!-- duplicate for seamless loop -->
+        <div class="t-card">
+          <p class="t-text">"$180k contract signed! Biggest contract of my career thus far."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/8ad04e11-4767-4dba-9e4e-f9bdef8a2ce3_7745a4b8-56c9-4cee-802d-571b88dd5d4c_2122d9d830eb40009ef5f018ecd0a081963d534655f84dbe922a91fa5607874a.jpeg?width=63&height=63&format=webp" alt="Eric Michaud" />
+            <div><div class="t-name">Eric Michaud</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+        <div class="t-card">
+          <p class="t-text">"Just landed a new client on Upwork. They reached out direct, no connects spent. Signed a 3-month mini-retainer at $1500/month — he paid the first milestone right away."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/3fdd26d3-4911-41c3-bcfd-db107906b869_78ac452c-1afd-41d1-82bb-1174ad4ca7fb_49dfdbcf3d02457d8919f82dabe6606711ff9c2317f74b31aaed0678cdc0ed68.jpeg?width=63&height=63&format=webp" alt="Jonathan Richey" />
+            <div><div class="t-name">Jonathan Richey</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+        <div class="t-card">
+          <p class="t-text">"Signed my first client for $6K build and $1200/mth!"</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/7c61a6e9-cfaa-42b9-ad72-2f60160cfe7b_45f9836d-9c5f-4979-87c6-847e4e67ccc6_273a25f7d6a44a03b8e43330a45600d68656bbfd6047471183559dbe743e1767.jpeg?width=63&height=63&format=webp" alt="Awesome MrT" />
+            <div><div class="t-name">Awesome MrT</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+        <div class="t-card">
+          <p class="t-text">"Have our first Lead Gen client. $26,500 (4.5K setup / 2K Monthly) ARR leveraging Instantly, Indeed, Apify, Clay and Make.com/N8N."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/3eb56286-4c4b-4793-ac32-7fd17ea031a6_5dda2f74-2b80-499c-bc48-e4bc0dbb83f7_3ff915cc8f3a4c7ba5ff23d143cfdd219ddc30ec72014c968982f3f8d74c1e81.jpeg?width=63&height=63&format=webp" alt="Keith Mortier" />
+            <div><div class="t-name">Keith Mortier</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Column 2 — community/experience, 26s -->
+    <div class="t-col">
+      <div class="t-col-inner" style="--dur:26s">
+
+        <div class="t-card">
+          <p class="t-text">"This course stands out because it doesn't just teach you how to do things step by step. Duncan takes a bigger picture approach — building a foundation for long term success rather than chasing quick wins. WORTH EVERY PENNY!"</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/0288d4a3-7bc4-4f5d-888c-2b971d80af20_9cdf5950-29b0-4347-a0af-0ad0faa48dd9_fbfc895b0dad42c2819b33834a8b1a7f8c0fa9d76ab04e37bd5b56c64128adc7-md.jpg?width=63&height=63&format=webp" alt="Rodgina Wheeler" />
+            <div><div class="t-name">Rodgina Wheeler</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+
+        <div class="t-card">
+          <p class="t-text">"I came in brand new to automations and confused by tools. Duncan's step-by-step teaching turned 'I don't get it' into 'I can do this.' I built my first working workflow and finally felt confident. The community is the difference."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/avatar/b90f4747-6448-4552-959e-6849f79857bc_Newest%20shot.jpg?width=63&height=63&format=webp" alt="Eartha Beech" />
+            <div><div class="t-name">Eartha Beech</div><div class="t-role">Founder</div></div>
+          </div>
+        </div>
+
+        <div class="t-card">
+          <p class="t-text">"I found you on YouTube while searching for a LinkedIn automation using n8n. After binge-watching your videos for a few days, I knew I had to join The Build Room — and I haven't regretted it for a second."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/2f061d65-46a5-4919-8226-90959cbcc12f_86abbe3b-b9af-4609-89f4-e0e4d7cd1b62_a9f1fe1cc8214b6a9cbc47a733e47ee631b79e374f764f43afc976420bbdfdb9-md.jpg?width=63&height=63&format=webp" alt="Zafer Baysan" />
+            <div><div class="t-name">Zafer Baysan</div><div class="t-role">AI & Automation Engineer</div></div>
+          </div>
+        </div>
+
+        <div class="t-card">
+          <p class="t-text">"I've got a lot of communities in my Skool graveyard, but your YT channel and LinkedIn content has been so valuable this community was a no-brainer."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/1f3e974a-6ba0-45bd-b2b9-b975d137f7a6_042ee170-c50e-4f9b-bb10-243fdcd733e3_bb6b445b9610488a8d65f0030667cf1fca0fa046554f4f4f9b26fa66e9a1c56f-md.jpg?width=63&height=63&format=webp" alt="Jay Smith" />
+            <div><div class="t-name">Jay Smith</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+
+        <!-- duplicate -->
+        <div class="t-card">
+          <p class="t-text">"This course stands out because it doesn't just teach you how to do things step by step. Duncan takes a bigger picture approach — building a foundation for long term success rather than chasing quick wins. WORTH EVERY PENNY!"</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/0288d4a3-7bc4-4f5d-888c-2b971d80af20_9cdf5950-29b0-4347-a0af-0ad0faa48dd9_fbfc895b0dad42c2819b33834a8b1a7f8c0fa9d76ab04e37bd5b56c64128adc7-md.jpg?width=63&height=63&format=webp" alt="Rodgina Wheeler" />
+            <div><div class="t-name">Rodgina Wheeler</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+        <div class="t-card">
+          <p class="t-text">"I came in brand new to automations and confused by tools. Duncan's step-by-step teaching turned 'I don't get it' into 'I can do this.' I built my first working workflow and finally felt confident. The community is the difference."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/avatar/b90f4747-6448-4552-959e-6849f79857bc_Newest%20shot.jpg?width=63&height=63&format=webp" alt="Eartha Beech" />
+            <div><div class="t-name">Eartha Beech</div><div class="t-role">Founder</div></div>
+          </div>
+        </div>
+        <div class="t-card">
+          <p class="t-text">"I found you on YouTube while searching for a LinkedIn automation using n8n. After binge-watching your videos for a few days, I knew I had to join The Build Room — and I haven't regretted it for a second."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/2f061d65-46a5-4919-8226-90959cbcc12f_86abbe3b-b9af-4609-89f4-e0e4d7cd1b62_a9f1fe1cc8214b6a9cbc47a733e47ee631b79e374f764f43afc976420bbdfdb9-md.jpg?width=63&height=63&format=webp" alt="Zafer Baysan" />
+            <div><div class="t-name">Zafer Baysan</div><div class="t-role">AI & Automation Engineer</div></div>
+          </div>
+        </div>
+        <div class="t-card">
+          <p class="t-text">"I've got a lot of communities in my Skool graveyard, but your YT channel and LinkedIn content has been so valuable this community was a no-brainer."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/1f3e974a-6ba0-45bd-b2b9-b975d137f7a6_042ee170-c50e-4f9b-bb10-243fdcd733e3_bb6b445b9610488a8d65f0030667cf1fca0fa046554f4f4f9b26fa66e9a1c56f-md.jpg?width=63&height=63&format=webp" alt="Jay Smith" />
+            <div><div class="t-name">Jay Smith</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Column 3 — quick wins, 16s -->
+    <div class="t-col">
+      <div class="t-col-inner" style="--dur:16s">
+
+        <div class="t-card">
+          <p class="t-text">"Delivered an AI Voice Agent project this week that handles calls, books appointments, and saves a client $24K a year."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/867259e2-73b2-4ff6-bd3e-cab619bd5091_1b7e2897-f2f5-49d7-9567-7a0251f3fca9_f6b5fb2c61d74e2486242d9275fbc62fe1cd9fb9e3394ac98c48bdbbc09fe526.jpeg?width=63&height=63&format=webp" alt="Muhammad Saad" />
+            <div><div class="t-name">Muhammad Saad</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+
+        <div class="t-card">
+          <p class="t-text">"Landed a new client: a 5-figure deal and multi-month AI consulting contract. Mapped 6 months of content. Completed an n8n automation for my socials. Real time saver."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/91bc39b3-52b5-4d04-9cd9-b4cb448fe793_29772f9a-3066-4b0e-b332-6d41bc15f796_641de4d41b3b4d25a02832991a80ceca09a9c8d624c74783bfa130270217a57d.jpeg?width=63&height=63&format=webp" alt="Larry Taylor" />
+            <div><div class="t-name">Larry Taylor</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+
+        <div class="t-card">
+          <p class="t-text">"Not just another bunch of templates. A real A-Z system to make you stand out from others. I've just started this journey with Duncan, and already I feel ten feet tall."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/avatar/1d9030ef-0f85-4f1c-b6ad-4a42cf6c5c5b_Nig_enhanced.jpeg?width=63&height=63&format=webp" alt="Nigel J Britton" />
+            <div><div class="t-name">Nigel J Britton</div><div class="t-role">Owner, CarlouAI</div></div>
+          </div>
+        </div>
+
+        <div class="t-card">
+          <p class="t-text">"The amount of value this man is pouring into this community is unreal. I was a little nervous just starting out. He took the time to answer questions and reshape my mindset. This is just the beginning!"</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/456a1412-9fe8-4027-a4ca-28f82f33f868_3ee37cf4-2896-4d88-be22-bba42e0b7332_d0961480afbe4c9da0f680bb316871989436dd52428d41f79309b7380c78a612.jpeg?width=63&height=63&format=webp" alt="Jason Dority" />
+            <div><div class="t-name">Jason Dority</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+
+        <!-- duplicate -->
+        <div class="t-card">
+          <p class="t-text">"Delivered an AI Voice Agent project this week that handles calls, books appointments, and saves a client $24K a year."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/867259e2-73b2-4ff6-bd3e-cab619bd5091_1b7e2897-f2f5-49d7-9567-7a0251f3fca9_f6b5fb2c61d74e2486242d9275fbc62fe1cd9fb9e3394ac98c48bdbbc09fe526.jpeg?width=63&height=63&format=webp" alt="Muhammad Saad" />
+            <div><div class="t-name">Muhammad Saad</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+        <div class="t-card">
+          <p class="t-text">"Landed a new client: a 5-figure deal and multi-month AI consulting contract. Mapped 6 months of content. Completed an n8n automation for my socials. Real time saver."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/91bc39b3-52b5-4d04-9cd9-b4cb448fe793_29772f9a-3066-4b0e-b332-6d41bc15f796_641de4d41b3b4d25a02832991a80ceca09a9c8d624c74783bfa130270217a57d.jpeg?width=63&height=63&format=webp" alt="Larry Taylor" />
+            <div><div class="t-name">Larry Taylor</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+        <div class="t-card">
+          <p class="t-text">"Not just another bunch of templates. A real A-Z system to make you stand out from others. I've just started this journey with Duncan, and already I feel ten feet tall."</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/avatar/1d9030ef-0f85-4f1c-b6ad-4a42cf6c5c5b_Nig_enhanced.jpeg?width=63&height=63&format=webp" alt="Nigel J Britton" />
+            <div><div class="t-name">Nigel J Britton</div><div class="t-role">Owner, CarlouAI</div></div>
+          </div>
+        </div>
+        <div class="t-card">
+          <p class="t-text">"The amount of value this man is pouring into this community is unreal. I was a little nervous just starting out. He took the time to answer questions and reshape my mindset. This is just the beginning!"</p>
+          <div class="t-author">
+            <img class="t-avatar" src="https://cdn.senja.io/public/media/456a1412-9fe8-4027-a4ca-28f82f33f868_3ee37cf4-2896-4d88-be22-bba42e0b7332_d0961480afbe4c9da0f680bb316871989436dd52428d41f79309b7380c78a612.jpeg?width=63&height=63&format=webp" alt="Jason Dority" />
+            <div><div class="t-name">Jason Dority</div><div class="t-role">Build Room Member</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     6. PRICING
+══════════════════════════════════ -->
+<section id="pricing">
+  <div class="container">
+    <div class="pricing-inner">
+      <div>
+        <span class="label reveal">Enroll</span>
+        <h2 class="pricing-headline reveal">One Price.<br />Instant Access.<br />No Fluff.</h2>
+        <ul class="includes-list reveal">
+          <li class="includes-item">
+            <span class="inc-ico" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            Full masterclass video content
+          </li>
+          <li class="includes-item">
+            <span class="inc-ico" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            Command library and reference materials
+          </li>
+          <li class="includes-item">
+            <span class="inc-ico" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            Workflow templates you can use immediately
+          </li>
+          <li class="includes-item">
+            <span class="inc-ico" aria-hidden="true"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            Future updates included
+          </li>
+        </ul>
+      </div>
+      <div class="pricing-right reveal">
+        <span class="price-badge">Early Bird</span>
+        <span class="price-was">$197</span>
+        <span class="price-num">$97</span>
+        <span class="price-meta">One-time payment · Lifetime access</span>
+        <div class="cta-group">
+          <a href="#" class="btn"><!-- Replace with checkout URL -->
+            <span class="btn-text">Enroll Now — $97 <s style="opacity:0.5;font-weight:400;">$197</s></span>
+            <span class="btn-fill" aria-hidden="true"></span>
+          </a>
+          <span class="micro">Instant access after purchase</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Duncan Rogoff · Claude Code Masterclass</p>
+  <p>All rights reserved</p>
+</footer>
+
+<script>
+  // ── Text scramble — hero headline ──
+  const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ·∙◦';
+
+  function scramble(el, text, duration, onDone) {
+    const frames = Math.round(duration / 36);
+    let f = 0;
+    el.classList.add('live');
+    const tick = setInterval(() => {
+      const p = f / frames;
+      el.textContent = text.split('').map((ch, i) => {
+        if (ch === ' ') return ' ';
+        if (p > (i / text.length) + 0.08) return ch;
+        return GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+      }).join('');
+      f++;
+      if (f > frames) {
+        clearInterval(tick);
+        el.textContent = text;
+        if (onDone) onDone();
+      }
+    }, 36);
+  }
+
+  const l1 = document.getElementById('hl1');
+  const l2 = document.getElementById('hl2');
+  const l3 = document.getElementById('hl3');
+
+  setTimeout(() => {
+    scramble(l1, 'SHIP REAL', 600, () => {
+      scramble(l2, 'AI PRODUCTS.', 720, () => {
+        // Restore amber on "AI PRODUCTS."
+        l2.innerHTML = '<em>AI PRODUCTS.</em>';
+        // Cursor appears during line 3 scramble
+        l3.classList.add('show-cursor');
+        scramble(l3, 'WITH CLAUDE CODE.', 840, () => {
+          setTimeout(() => l3.classList.remove('show-cursor'), 1800);
+        });
+      });
+    });
+  }, 320);
+
+  // ── Scroll reveals ──
+  const revObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); revObs.unobserve(e.target); }
+    });
+  }, { threshold: 0.07, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+  // ── Directional hover on buttons ──
+  document.querySelectorAll('.btn').forEach(btn => {
+    const getDir = e => {
+      const r = btn.getBoundingClientRect();
+      const a = Math.atan2(e.clientY - r.top - r.height / 2, e.clientX - r.left - r.width / 2) * 180 / Math.PI;
+      if (a > -45 && a <= 45)   return 'right';
+      if (a > 45  && a <= 135)  return 'bottom';
+      if (a > 135 || a <= -135) return 'left';
+      return 'top';
+    };
+    btn.addEventListener('mouseenter', e => {
+      btn.classList.remove('dir-top', 'dir-bottom', 'dir-left', 'dir-right');
+      const d = getDir(e);
+      if (d !== 'bottom') btn.classList.add('dir-' + d);
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.classList.remove('dir-top', 'dir-bottom', 'dir-left', 'dir-right');
+    });
+  });
+
+  // ── Hero parallax ──
+  const hl = document.querySelector('h1.hero-headline');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY < window.innerHeight && hl)
+      hl.style.transform = `translateY(${window.scrollY * 0.09}px)`;
+  }, { passive: true });
+
+  // ── Glowing arc border on outcome items ──
+  (function() {
+    const items = document.querySelectorAll('.outcome-item');
+    document.body.addEventListener('pointermove', e => {
+      items.forEach(item => {
+        const r = item.getBoundingClientRect();
+        const proximity = 80;
+        const inRange =
+          e.clientX > r.left   - proximity &&
+          e.clientX < r.right  + proximity &&
+          e.clientY > r.top    - proximity &&
+          e.clientY < r.bottom + proximity;
+        item.style.setProperty('--active', inRange ? '1' : '0');
+        if (!inRange) return;
+        const cx = r.left + r.width  * 0.5;
+        const cy = r.top  + r.height * 0.5;
+        const angle = (180 * Math.atan2(e.clientY - cy, e.clientX - cx)) / Math.PI + 90;
+        item.style.setProperty('--start', String(angle));
+      });
+    }, { passive: true });
+  })();
+
+  // ── Mouse glow on pain items ──
+  document.querySelectorAll('.pain-item').forEach(item => {
+    item.addEventListener('mousemove', e => {
+      const r = item.getBoundingClientRect();
+      item.style.setProperty('--gx', ((e.clientX - r.left) / r.width * 100) + '%');
+      item.style.setProperty('--gy', ((e.clientY - r.top)  / r.height * 100) + '%');
+    });
+  });
+</script>
+</body>
+</html>

@@ -8,7 +8,7 @@ interface Module {
   content: string
 }
 
-const STORAGE_KEY = 'klas-progress'
+const STORAGE_KEY = 'portal-progress'
 
 function getCompleted(stageSlug: string): Set<string> {
   try {
@@ -28,7 +28,7 @@ function saveCompleted(stageSlug: string, completed: Set<string>) {
     all[stageSlug] = Array.from(completed)
     localStorage.setItem(STORAGE_KEY, JSON.stringify(all))
     // Notify other tabs / components
-    window.dispatchEvent(new Event('klas-progress-change'))
+    window.dispatchEvent(new Event('portal-progress-change'))
   } catch {}
 }
 
@@ -67,8 +67,8 @@ export default function ModuleLayout({ content, stageSlug }: { content: string; 
       setMounted(true)
     }
     sync()
-    window.addEventListener('klas-progress-change', sync)
-    return () => window.removeEventListener('klas-progress-change', sync)
+    window.addEventListener('portal-progress-change', sync)
+    return () => window.removeEventListener('portal-progress-change', sync)
   }, [stageSlug])
 
   function toggleDone(title: string) {
@@ -95,7 +95,7 @@ export default function ModuleLayout({ content, stageSlug }: { content: string; 
       <div className="w-64 shrink-0 border-r border-border overflow-y-auto">
         <div className="p-3 border-b border-border flex items-center justify-between">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-            {modules.length} Materi
+            {modules.length} Lessons
           </p>
           {mounted && (
             <span className="text-xs text-muted-foreground">
@@ -156,7 +156,7 @@ export default function ModuleLayout({ content, stageSlug }: { content: string; 
             {mounted && (
               <button
                 onClick={() => toggleDone(currentTitle)}
-                title={isDone ? 'Tandai belum selesai' : 'Tandai selesai'}
+                title={isDone ? 'Mark as incomplete' : 'Mark as done'}
                 className={`shrink-0 flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-all ${
                   isDone
                     ? 'bg-green-500/10 text-green-600 border-green-500/30 hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/30'
@@ -164,7 +164,7 @@ export default function ModuleLayout({ content, stageSlug }: { content: string; 
                 }`}
               >
                 <span>{isDone ? '✓' : '○'}</span>
-                <span>{isDone ? 'Selesai' : 'Tandai selesai'}</span>
+                <span>{isDone ? 'Done' : 'Mark as done'}</span>
               </button>
             )}
           </div>

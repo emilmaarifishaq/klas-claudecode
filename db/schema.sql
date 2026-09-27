@@ -8,18 +8,3 @@ CREATE TABLE IF NOT EXISTS users (
   name TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-
-CREATE TABLE IF NOT EXISTS orders (
-  id SERIAL PRIMARY KEY,
-  merchant_ref TEXT UNIQUE NOT NULL,
-  tripay_reference TEXT,
-  customer_name TEXT NOT NULL,
-  customer_email TEXT NOT NULL,
-  amount INTEGER NOT NULL,
-  status TEXT NOT NULL DEFAULT 'pending',
-  checkout_url TEXT,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-  paid_at TIMESTAMPTZ
-);
-
-CREATE INDEX IF NOT EXISTS orders_status_idx ON orders (status);

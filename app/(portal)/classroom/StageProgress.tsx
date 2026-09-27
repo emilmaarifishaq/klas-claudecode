@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 
-const STORAGE_KEY = 'klas-progress'
+const STORAGE_KEY = 'portal-progress'
 
 function getPercent(stageSlug: string, totalModules: number): number {
   try {
@@ -22,8 +22,8 @@ export default function StageProgress({ stageSlug, totalModules }: { stageSlug: 
   useEffect(() => {
     const update = () => setPct(getPercent(stageSlug, totalModules))
     update()
-    window.addEventListener('klas-progress-change', update)
-    return () => window.removeEventListener('klas-progress-change', update)
+    window.addEventListener('portal-progress-change', update)
+    return () => window.removeEventListener('portal-progress-change', update)
   }, [stageSlug, totalModules])
 
   return (

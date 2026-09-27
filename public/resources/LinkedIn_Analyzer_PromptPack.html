@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinkedIn Audience Audit</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink-orange: #E96A3C;
+      --ink-paper: #E8DCC4;
+      --ink-charcoal: #1C1B17;
+      --ink-bone: #F2E9D6;
+      --font-display: 'Anton', 'Impact', sans-serif;
+      --font-meta: 'JetBrains Mono', monospace;
+      --font-body: 'Inter', system-ui, sans-serif;
+    }
+    html { background: var(--ink-charcoal); }
+    body {
+      background: var(--ink-charcoal);
+      color: var(--ink-paper);
+      font-family: var(--font-body);
+      min-height: 100vh;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+      opacity: 0.1;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      z-index: 9998;
+    }
+    .col { max-width: 860px; width: 100%; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 2; }
+
+    /* Header */
+    .page-header {
+      padding: 64px 0 48px;
+      border-bottom: 2px solid rgba(232,220,196,0.12);
+      margin-bottom: 56px;
+    }
+    .page-eyebrow {
+      font-family: var(--font-meta);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-orange);
+      margin-bottom: 16px;
+    }
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 56px;
+      text-transform: uppercase;
+      line-height: 0.92;
+      color: var(--ink-paper);
+    }
+
+    /* Prompt cards */
+    .prompt-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      padding-bottom: 80px;
+    }
+    .prompt-card {
+      background: var(--ink-bone);
+      border: 2px solid rgba(232,220,196,0.15);
+      padding: 36px 40px;
+      position: relative;
+    }
+    .prompt-accent {
+      position: absolute;
+      top: 0; left: 0;
+      width: 5px; height: 100%;
+      background: var(--ink-orange);
+    }
+    .prompt-card-header {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 8px;
+    }
+    .prompt-card-num {
+      font-family: var(--font-meta);
+      font-size: 10px;
+      color: var(--ink-orange);
+      font-weight: 700;
+      letter-spacing: 0.12em;
+    }
+    .prompt-card-filename {
+      font-family: var(--font-display);
+      font-size: 28px;
+      text-transform: uppercase;
+      color: var(--ink-charcoal);
+      line-height: 1;
+    }
+    .prompt-card-desc {
+      font-family: var(--font-meta);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--ink-charcoal);
+      opacity: 0.5;
+      margin-bottom: 20px;
+    }
+    .prompt-box {
+      background: var(--ink-charcoal);
+      color: var(--ink-paper);
+      font-family: var(--font-meta);
+      font-size: 13px;
+      line-height: 1.7;
+      padding: 24px 28px;
+      border: none;
+      width: 100%;
+      resize: none;
+      outline: none;
+      display: block;
+      margin-bottom: 14px;
+    }
+    .prompt-box::selection { background: var(--ink-paper); color: var(--ink-charcoal); }
+    .copy-btn {
+      background: var(--ink-orange);
+      color: var(--ink-charcoal);
+      font-family: var(--font-meta);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: none;
+      padding: 13px 28px;
+      cursor: pointer;
+      transition: background 0.1s, color 0.1s;
+    }
+    .copy-btn:hover { background: var(--ink-charcoal); color: var(--ink-paper); border: 2px solid var(--ink-paper); }
+    .copy-btn.copied { background: var(--ink-charcoal); color: var(--ink-paper); }
+    @media (max-width: 600px) {
+      .prompt-card { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="col">
+    <div class="page-header">
+      <div class="page-eyebrow">Claude Prompts // LinkedIn Audience Audit // 2026</div>
+      <div class="page-title">LinkedIn Audience Audit</div>
+    </div>
+    <div class="prompt-grid">
+
+      <div class="prompt-card">
+        <div class="prompt-accent"></div>
+        <div class="prompt-card-header">
+          <span class="prompt-card-num">01</span>
+          <span class="prompt-card-filename">ICP Discovery</span>
+        </div>
+        <div class="prompt-card-desc">Reverse-engineer your ideal customer profile from your offer</div>
+        <textarea class="prompt-box" id="p1" rows="28" readonly>I'm going to describe my offer. Your job is to reverse-engineer my ICP.
+
+My offer:
+[paste offer here]
+
+From this, give me:
+
+1. Who is most likely to buy this — job title, life situation, where they are in their journey (not too early, not too advanced)
+
+2. The trigger event — what happened in their life in the last 30-90 days that made them ready to buy now (not generally interested — actively looking)
+
+3. Their exact language — how they describe their problem to themselves, not the solution. Write it as they'd type it into Google or say it to a friend.
+
+4. What they've already tried — and why it failed. This is what makes them skeptical.
+
+5. The negative ICP — who looks like my buyer but isn't. Who wastes time in sales conversations.
+
+6. The single sentence they'd use to describe what they want, if they could have anything.
+
+Don't give me demographics. Give me psychology and situation.</textarea>
+        <button class="copy-btn" onclick="copyPrompt('p1', this)">Copy Prompt</button>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-accent"></div>
+        <div class="prompt-card-header">
+          <span class="prompt-card-num">02</span>
+          <span class="prompt-card-filename">Apify Scraper</span>
+        </div>
+        <div class="prompt-card-desc">Use Apify to scrape 30 days of LinkedIn posts and comments, output a CSV</div>
+        <textarea class="prompt-box" id="p2" rows="38" readonly>I need you to use Apify to scrape the last 30 days of posts from my LinkedIn profile, along with all comments on each post, and save everything as a CSV.
+
+My LinkedIn profile URL: [paste your LinkedIn profile URL]
+
+Here is what I need you to do:
+
+1. Use the Apify LinkedIn Posts Scraper to pull all posts from my profile from the last 30 days. For each post, collect: post date, post text, total reactions, total comments.
+
+2. For each post, use the Apify LinkedIn Comments Scraper to pull every comment. For each comment, collect: commenter name, commenter job title, commenter LinkedIn URL, commenter about/bio section, comment text.
+
+3. Combine everything into a single CSV with these columns:
+   post_date, post_text, total_reactions, total_comments, commenter_name, commenter_job_title, commenter_linkedin_url, commenter_bio, comment_text
+
+4. Save the file as linkedin-audit.csv in the current directory.
+
+Use the APIFY_API_TOKEN from the environment. Run each scraper, wait for completion, then download the results before moving to the next step. Print progress as you go.</textarea>
+        <button class="copy-btn" onclick="copyPrompt('p2', this)">Copy Prompt</button>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-accent"></div>
+        <div class="prompt-card-header">
+          <span class="prompt-card-num">03</span>
+          <span class="prompt-card-filename">Commenter Classifier</span>
+        </div>
+        <div class="prompt-card-desc">Read linkedin-audit.csv and classify every commenter against your ICP</div>
+        <textarea class="prompt-box" id="p3" rows="42" readonly>Using the data in linkedin-audit.csv from step 2, classify every commenter against my ICP.
+
+My ICP:
+[paste your ICP output from step 1 here]
+
+Read the CSV, then for each unique commenter, output a classification using their job title and bio:
+- Name
+- Job title
+- Classification: BUYER | PEER | CREATOR | COMPETITOR | UNKNOWN
+- Confidence: HIGH | MED | LOW
+- One-line reason
+
+Use this logic:
+- BUYER: matches my ICP — right title, right stage, right situation
+- PEER: same space as me, not a buyer (other coaches, consultants, educators)
+- CREATOR: content creator, influencer, YouTuber — here for the content, not to buy
+- COMPETITOR: sells something similar to what I sell
+- UNKNOWN: not enough info to classify
+
+Once every commenter is classified, add a classification column back to the CSV and save it as linkedin-audit-classified.csv.
+
+At the end, print:
+- Total unique commenters
+- Count and percentage per classification
+- One sentence on what the audience breakdown tells me about my content</textarea>
+        <button class="copy-btn" onclick="copyPrompt('p3', this)">Copy Prompt</button>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-accent"></div>
+        <div class="prompt-card-header">
+          <span class="prompt-card-num">04</span>
+          <span class="prompt-card-filename">Audience Dashboard</span>
+        </div>
+        <div class="prompt-card-desc">Turn linkedin-audit-classified.csv into a self-contained HTML dashboard</div>
+        <textarea class="prompt-box" id="p4" rows="40" readonly>Using the data in linkedin-audit-classified.csv from step 3, build me an audience quality dashboard as a single self-contained HTML file.
+
+The dashboard must show:
+
+1. The headline stat — overall % of engagement from BUYER vs everyone else. Big number, impossible to miss.
+
+2. A post performance table — each post with its audience split shown as a bar or percentage. Sorted by buyer engagement, not total engagement.
+
+3. Commenter breakdown — bar chart showing BUYER / PEER / CREATOR / COMPETITOR / UNKNOWN split across all posts.
+
+4. Best and worst posts — top 3 posts by buyer engagement and bottom 3. Show the post text snippet next to the numbers.
+
+5. Trend line — buyer engagement % by week over the 30 days. Am I improving or declining?
+
+Design: dark background, clean typography, data-forward. No decorative elements. Every number must be immediately readable.
+
+Hardcode the data from the CSV directly into the HTML. No external dependencies except a CDN chart library if needed. Save the file as linkedin-dashboard.html.</textarea>
+        <button class="copy-btn" onclick="copyPrompt('p4', this)">Copy Prompt</button>
+      </div>
+
+      <div class="prompt-card">
+        <div class="prompt-accent"></div>
+        <div class="prompt-card-header">
+          <span class="prompt-card-num">05</span>
+          <span class="prompt-card-filename">Content Brief Generator</span>
+        </div>
+        <div class="prompt-card-desc">Extract patterns from buyer-attracting posts and generate a reusable content brief</div>
+        <textarea class="prompt-box" id="p5" rows="46" readonly>Using linkedin-audit-classified.csv from step 3, identify my top and bottom performing posts by buyer engagement, then generate a content brief.
+
+From the CSV, pull:
+- Top 5 posts by buyer commenter count (these attracted the most buyers)
+- Bottom 5 posts by buyer commenter count (these attracted the fewest)
+
+Analyze the two groups and give me:
+
+1. What the buyer-attracting posts have in common
+   - Topic patterns (what subjects pull buyers)
+   - Format patterns (how they are structured — lists, stories, single insight, etc.)
+   - Language patterns (specific words, phrases, or framing that appears in buyer posts)
+   - Hook style and length
+
+2. What the low-performing posts have in common
+   - What signals peer or creator audiences instead of buyers
+
+3. The diagnosis
+   - One sentence: am I attracting the wrong audience because of topic, language, or format?
+
+4. My content brief going forward
+   - 3 content angles I should lean into based on what attracted buyers
+   - 3 content types I should cut or adjust
+   - A reusable post template modeled on my best buyer-attracting post, stripped of specifics
+
+Make the brief something I can open on Monday morning and immediately know what to write.</textarea>
+        <button class="copy-btn" onclick="copyPrompt('p5', this)">Copy Prompt</button>
+      </div>
+
+    </div>
+  </div>
+  <script>
+    function copyPrompt(id, btn) {
+      const text = document.getElementById(id).value;
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copy Prompt';
+          btn.classList.remove('copied');
+        }, 1800);
+      });
+    }
+  </script>
+</body>
+</html>
