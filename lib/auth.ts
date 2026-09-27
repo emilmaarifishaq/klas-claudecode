@@ -14,17 +14,17 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) throw new Error('Email and password are required')
+        if (!credentials?.email || !credentials?.password) throw new Error('Email dan password wajib diisi')
         let user
         try {
           user = await getUser(credentials.email)
         } catch (error) {
           // Keep database details out of the login page; they belong in the server logs.
           console.error('[auth] user lookup failed', error)
-          throw new Error('Sign-in is unavailable right now. Try again later.')
+          throw new Error('Login sedang bermasalah. Coba lagi nanti.')
         }
         if (!user || !(await compare(credentials.password, user.password))) {
-          throw new Error('Invalid email or password')
+          throw new Error('Email atau password salah')
         }
         return { id: user.email, email: user.email, name: user.name }
       },

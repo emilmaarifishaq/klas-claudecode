@@ -21,12 +21,12 @@ export default function LoginPage() {
       router.refresh()
       return
     }
-    setError(result?.error || 'Sign-in failed')
+    setError(result?.error || 'Gagal masuk')
     setIsLoading(false)
   }
 
   return (
-    <AuthCard title="Sign in" subtitle="Claude Code Club — Portal">
+    <AuthCard title="Masuk" subtitle="Masuk ke kelasmu">
       {error && <div className="mb-4 p-3 bg-destructive/10 border border-destructive/30 rounded-lg text-destructive text-sm">{error}</div>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -40,7 +40,7 @@ export default function LoginPage() {
             onChange={e => setFormData({ ...formData, password: e.target.value })} />
         </div>
         <button type="submit" disabled={isLoading} className={buttonClass}>
-          {isLoading ? 'Signing in...' : 'Sign in'}
+          {isLoading ? 'Masuk...' : 'Masuk'}
         </button>
       </form>
     </AuthCard>
