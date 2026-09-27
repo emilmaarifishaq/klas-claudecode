@@ -12,7 +12,7 @@ accounts before it works.
 
 - [ ] Project → **Storage** → **Create Database** → Postgres, attach it to this project
       (this fills `POSTGRES_URL` automatically)
-- [ ] Open the database **Query** console and run `db/schema.sql` once
+- Tables are created automatically on first use (`lib/db/schema.ts`); `db/schema.sql` is kept for reference
 
 ## 3. Tripay (QRIS)
 
@@ -41,6 +41,8 @@ accounts before it works.
 | `PRODUCT_PRICE_IDR` | numbers only, e.g. `99000` |
 | `RESEND_API_KEY` | from Resend |
 | `RESEND_FROM` | `onboarding@resend.dev` until you verify a domain |
+| `ADMIN_EMAIL` | optional — admin account created automatically on startup |
+| `ADMIN_PASSWORD_HASH` | bcrypt hash of the admin password (command in `.env.example`) |
 
 Redeploy after changing variables — the sales page price is baked in at build time.
 
