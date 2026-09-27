@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { stages, courseStages } from '@/data/stages'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
+import { listMembers } from '@/lib/db/users'
 
 const levelInfo = [
   { level: 1, title: 'Inner Circle', points: 0 },
@@ -15,13 +16,18 @@ const levelInfo = [
   { level: 9, title: 'Claude Almighty', points: 33015 },
 ]
 
-const stats = [
-  { label: 'Total Stages', value: stages.length, emoji: '📚' },
-  { label: 'Course Stages', value: courseStages.length, emoji: '🎓' },
-  { label: 'Total Modules', value: stages.reduce((a, s) => a + s.modules.length, 0), emoji: '📖' },
-]
+export default async function DashboardPage() {
+  const members = await listMembers().catch(error => {
+    console.error('[dashboard] member count failed', error)
+    return null
+  })
+  const stats = [
+    { label: 'Total Stages', value: stages.length, emoji: '📚' },
+    { label: 'Course Stages', value: courseStages.length, emoji: '🎓' },
+    { label: 'Total Modules', value: stages.reduce((a, s) => a + s.modules.length, 0), emoji: '📖' },
+    { label: 'Members', value: members ? members.length.toLocaleString() : '—', emoji: '👥' },
+  ]
 
-export default function DashboardPage() {
   return (
     <div className="p-6 max-w-5xl mx-auto space-y-8">
       <div>
@@ -29,7 +35,7 @@ export default function DashboardPage() {
         <p className="text-muted-foreground mt-1">Claude Code Club — Personal Learning Portal</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map(s => (
           <div key={s.label} className="bg-card border border-border rounded-xl p-4">
             <div className="text-2xl mb-1">{s.emoji}</div>

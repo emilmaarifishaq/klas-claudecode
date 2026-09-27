@@ -13,6 +13,8 @@ async function migrate() {
     )
   `
 
+  await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMPTZ`
+
   // Admin account from env, so the owner can sign in without buying or running SQL.
   // Re-applied on every cold start, so changing ADMIN_PASSWORD_HASH in Vercel resets the password.
   const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase()
